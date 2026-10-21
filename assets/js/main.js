@@ -15,6 +15,7 @@
   const isDesktop = () => innerWidth >= 1024;
 
   root.classList.add("js");
+  if (window.CSS && CSS.registerProperty && !reduce) root.classList.add("wipe");   // soft-edge reveal for the neon tubes (needs @property)
 
   /* ------- real viewport width (excludes scrollbar) ------- */
   const setVW = () => root.style.setProperty("--vw", root.clientWidth + "px");
@@ -59,6 +60,7 @@
       r.setAttribute("d", `M${x2} ${yb - 3} C ${x2 + span * .3} ${yb + 3}, ${x2 + span * .55} ${yb - 14}, ${x2 + span * .8} ${yb - 13} S ${W - 3} ${yb - 4}, ${W - 2} ${yb - 9}`);
       [l, r].forEach(p => { const len = Math.ceil(p.getTotalLength()) + 2; p.style.setProperty("--len", len); });
     });
+    scribbleLayout();
   }
 
   /* ------- project names: biggest size that fits the column (like the mockup) ------- */
@@ -73,6 +75,158 @@
   }
   addEventListener("resize", () => requestAnimationFrame(fitNames), { passive: true });
 
+  /* ------- snakes: each neon tube slithers in along its own body ------- */
+  // every tube image has a "time map" (assets/img/maps): grey = when the snake's body reaches that pixel.
+  // An SVG mask turns the map into a moving front, so only the snake is revealed - everything else stays put.
+  const SNAKE_K = 14;
+  const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const snakeReady = [];
+  function makeSnake(img, { dur = 3.4, fit = "none" } = {}) {
+    if (!img || reduce || !(window.CSS && CSS.supports("mask-type", "luminance") || true)) return null;
+    const pic = img.closest("picture");
+    const srcEl = pic && $("source", pic);
+    const holder = (pic || img).parentElement;
+    const s = { key: "", svg: null, fes: [], p: 0, raf: 0, started: false, ready: null };
+    const setP = p => {
+      s.p = p;
+      const ic = (SNAKE_K * (0.1 + p * 1.02)).toFixed(3);
+      s.fes.forEach(f => f.setAttribute("intercept", ic));
+    };
+    const build = () => {
+      const src = (srcEl && matchMedia(srcEl.media).matches) ? srcEl.getAttribute("srcset") : img.getAttribute("src");
+      const base = src.split("/").pop().replace(/\.\w+$/, "");
+      if (s.key === base) return s.ready;
+      s.key = base;
+      const map = `assets/img/maps/${base}.png`, plate = `assets/img/maps/${base}-plate.webp`;
+      s.ready = Promise.all([loadImg(src), loadImg(map), loadImg(plate).catch(() => null)]).then(([im, , pl]) => {
+        if (s.key !== base) return;
+        const W = im.naturalWidth, H = im.naturalHeight, id = `sn${Math.random().toString(36).slice(2, 7)}`;
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("class", "snake");
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.setAttribute("preserveAspectRatio", fit);
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("focusable", "false");
+        const fn = ["R", "G", "B"].map(c => `<feFunc${c} type="linear" slope="-${SNAKE_K}" intercept="${SNAKE_K * .1}"/>`).join("");
+        svg.innerHTML =
+          `<defs><filter id="f${id}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feComponentTransfer>${fn}</feComponentTransfer></filter>` +
+          `<mask id="m${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}" style="mask-type:luminance"><image href="${map}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none" filter="url(#f${id})"/></mask></defs>` +
+          (pl ? `<image href="${plate}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none"/>` : "") +
+          `<image href="${src}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none" mask="url(#m${id})"/>`;
+        s.svg && s.svg.remove();
+        s.svg = svg; s.fes = [...svg.querySelectorAll("feComponentTransfer > *")];
+        (pic || img).after(svg);
+        (pic || img).style.display = "none";
+        setP(s.started ? s.p : 0);
+      }).catch(() => { s.svg && s.svg.remove(); s.svg = null; (pic || img).style.display = ""; s.failed = true; });
+      return s.ready;
+    };
+    s.play = (delay = 0) => {
+      if (s.started) return; s.started = true;
+      s.ready.then(() => {
+        if (s.failed) return;
+        const t0 = performance.now() + delay * 1000;
+        const tick = now => {
+          const k = Math.min(1, Math.max(0, (now - t0) / (dur * 1000)));
+          setP(ease(k));
+          if (k < 1) s.raf = requestAnimationFrame(tick);
+        };
+        s.raf = requestAnimationFrame(tick);
+      });
+    };
+    build();
+    const mq = srcEl && matchMedia(srcEl.media);
+    mq && mq.addEventListener("change", () => build());
+    snakeReady.push(s.ready);
+    holder._snake = s; holder.classList.add("snake-on");
+    return s;
+  }
+  const heroSnake = makeSnake($(".hero__art img"), { dur: 3.8, fit: "xMidYMid slice" });
+  makeSnake($(".contact__tube img"), { dur: 3.6 });
+  makeSnake($(".talk__script img"), { dur: 3.4 });
+
+  /* ------- script titles: scribbled in, stroke by stroke ------- */
+  function scribbleLayout() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    scripts.forEach(el => {
+      const w = el.clientWidth, h = el.clientHeight;
+      if (!w || !h || reduce) return;
+      const text = el.dataset.script, fs = parseFloat(el.dataset.fs || 60);
+      const scale = h / 60, cw = Math.round(w * dpr), ch = Math.round(h * dpr);
+      let st = el._scr;
+      if (!st) {
+        const cv = document.createElement("canvas");
+        cv.className = "script__pen";
+        el.append(cv);
+        st = el._scr = { cv, p: 0, raf: 0, started: false, key: "" };
+        const go = () => { if (el.classList.contains("is-in") && !st.started) { st.started = true; penPlay(st); } };
+        new MutationObserver(go).observe(el, { attributes: true, attributeFilter: ["class"] });
+        go();
+      }
+      const key = `${cw}x${ch}`;
+      if (st.key === key) return;
+      st.key = key;
+      const cv = st.cv; cv.width = cw; cv.height = ch;
+      const ctx = cv.getContext("2d", { willReadFrequently: true });
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.font = `${fs * scale * dpr}px Allison`;
+      ctx.textAlign = "center"; ctx.direction = "ltr";
+      ctx.fillStyle = getComputedStyle(el).color;
+      ctx.fillText(text, cw / 2, 44 * scale * dpr);
+      const img = ctx.getImageData(0, 0, cw, ch), d = img.data;
+      // geodesic "pen time" along the strokes, starting at the left end of every connected piece
+      const N = cw * ch, T = new Float32Array(N).fill(-1), q = new Int32Array(N);
+      const on = i => d[i * 4 + 3] > 40;
+      const comps = []; let total = 0;
+      for (let x = 0; x < cw; x++) for (let y = 0; y < ch; y++) {
+        const s0 = y * cw + x;
+        if (!on(s0) || T[s0] >= 0) continue;
+        let qh = 0, qt = 0; q[qt++] = s0; T[s0] = 0; let mx = 0; const members = [s0];
+        while (qh < qt) {
+          const c = q[qh++], cx = c % cw, cy = (c / cw) | 0, dc = T[c];
+          for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+            if (!dx && !dy) continue;
+            const nx = cx + dx, ny = cy + dy;
+            if (nx < 0 || ny < 0 || nx >= cw || ny >= ch) continue;
+            const n = ny * cw + nx;
+            if (T[n] >= 0 || !on(n)) continue;
+            T[n] = dc + (dx && dy ? 1.4 : 1); if (T[n] > mx) mx = T[n];
+            q[qt++] = n; members.push(n);
+          }
+        }
+        comps.push({ members, mx }); total += mx + cw * .01;
+      }
+      let off = 0;
+      const idx = [], tt = [], a0 = [];
+      comps.forEach(c => {
+        c.members.forEach(i => { idx.push(i); tt.push((off + T[i]) / total); a0.push(d[i * 4 + 3]); });
+        off += c.mx + cw * .01;
+      });
+      st.draw = p => {
+        const soft = .045, out = ctx.createImageData(cw, ch), o = out.data;
+        const r = d[idx[0] * 4], g = d[idx[0] * 4 + 1], b = d[idx[0] * 4 + 2];
+        for (let k = 0; k < idx.length; k++) {
+          const a = Math.max(0, Math.min(1, (p * (1 + soft) - tt[k]) / soft));
+          if (a <= 0) continue;
+          const i = idx[k] * 4; o[i] = r; o[i + 1] = g; o[i + 2] = b; o[i + 3] = a0[k] * a;
+        }
+        ctx.putImageData(out, 0, 0);
+      };
+      st.draw(st.started ? st.p : 0);
+      el.classList.add("script--pen");
+    });
+  }
+  function penPlay(st) {
+    const dur = 1500, t0 = performance.now() + 700;
+    const tick = now => {
+      const k = Math.min(1, Math.max(0, (now - t0) / dur));
+      st.p = k; st.draw && st.draw(k);
+      if (k < 1) st.raf = requestAnimationFrame(tick);
+    };
+    st.raf = requestAnimationFrame(tick);
+  }
+
   /* ------- intro / loader ------- */
   const heroImg = $(".hero__art img");
   const imgReady = new Promise(res => (heroImg && !heroImg.complete) ? (heroImg.onload = heroImg.onerror = res) : res());
@@ -80,7 +234,7 @@
   const minTime = new Promise(res => setTimeout(res, reduce ? 0 : 1100));
   const failSafe = new Promise(res => setTimeout(res, 4000));
 
-  Promise.race([Promise.all([imgReady, fontsReady, minTime]), failSafe]).then(() => {
+  Promise.race([Promise.all([imgReady, fontsReady, minTime, ...snakeReady]), failSafe]).then(() => {
     layoutScripts();
     fitNames();
     body.classList.remove("is-loading");
@@ -88,6 +242,8 @@
     setTimeout(() => {
       body.classList.add("is-ready");
       setTimeout(() => $(".hero__script")?.classList.add("is-in"), 350);
+      // hero: the page is already there (headline, laptop) - then the snakes slither in
+      setTimeout(() => heroSnake?.play(), reduce ? 0 : 1100);
     }, reduce ? 0 : 250);
   });
 
@@ -143,6 +299,7 @@
     entries.forEach(en => {
       if (!en.isIntersecting) return;
       en.target.classList.add("is-in");
+      en.target._snake?.play();
       io.unobserve(en.target);
     });
   }, { rootMargin: "0px 0px -12% 0px", threshold: .08 });
