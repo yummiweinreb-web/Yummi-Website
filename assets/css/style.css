@@ -31,7 +31,8 @@
 
   --vw: 100vw;               /* overwritten by JS with the real client width */
   --cap: 1720px;             /* larger screens keep the composition, centered */
-  --W: min(var(--vw), var(--cap));
+  --k: .7;                   /* overall size of the desktop composition (1 = fills the window, .7 = 30% smaller) */
+  --W: calc(min(var(--vw), var(--cap)) * var(--k));
   --a: calc(var(--W) / 860);
   --b: calc(var(--W) / 736);
   --c: calc(var(--W) / 1122);
@@ -218,8 +219,9 @@ body:not(.is-loading) .loader { opacity: 0; visibility: hidden; }
 .hero__script { left: calc(232 * var(--a)); top: calc(150 * var(--a)); width: calc(418 * var(--a)); height: calc(60 * var(--a)); z-index: 3; }
 .hero__art {
   position: absolute; left: 0; top: 0; width: calc(860 * var(--a)); height: calc(700 * var(--a)); overflow: hidden;
-  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
-          mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%), linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 88%, transparent 100%), linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
 }
 .hero__art img, .hero__art .snake { display: block; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 45%;
   transform: translate3d(var(--px, 0), calc(var(--py, 0px) + var(--hs, 0px)), 0) scale(calc(1.012 + var(--hz, 0)));
@@ -486,7 +488,7 @@ picture { display: contents; }
 .sep-wave { display: none; }
 
 @media (max-width: 1023.98px) {
-  :root { --cap: 640px; --n: calc(var(--W) / 732); --p: calc(var(--W) / 717); --q: calc(var(--W) / 816); }
+  :root { --k: 1; --cap: 640px; --n: calc(var(--W) / 732); --p: calc(var(--W) / 717); --q: calc(var(--W) / 816); }
   .br-m { display: inline; }
   .hero__title .lime .dot { color: var(--red); }
   .cursor-glow, .hero__scroll { display: none; }
@@ -666,6 +668,27 @@ picture { display: contents; }
           mask-image: linear-gradient(90deg, #000 calc(var(--wipe) - 28%), transparent var(--wipe));
 }
 .wipe .about__art.is-in { animation: wipeIn 2.2s cubic-bezier(.45, .05, .25, 1) .15s both; }
+
+/* ---------- fixed type sizes (desktop): body 20px · sub-headings 40px · main headings 60px ---------- */
+@media (min-width: 1024px) {
+  .hero__title, .about__title, .process__title, .work__title, .contact__title, .talk__title { font-size: 60px; line-height: 1.02; }
+  .about__sub, .step__title, .project__name { font-size: 40px; line-height: 1.1; }
+  .about__body, .step__text, .project__tag, .contact__sub, .talk__sub { font-size: 20px; line-height: 1.45; }
+}
+
+/* soft edges now that the composition is narrower than the window (desktop) */
+@media (min-width: 1024px) {
+  .contact__tube img, .contact__tube .snake {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 90%, transparent 100%), linear-gradient(180deg, transparent 0, #000 14%, #000 88%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 90%, transparent 100%), linear-gradient(180deg, transparent 0, #000 14%, #000 88%, transparent 100%);
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+  .talk__script img, .talk__script .snake {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 85%, transparent 100%), linear-gradient(0deg, transparent 0, #000 8%, #000 92%, transparent);
+            mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 85%, transparent 100%), linear-gradient(0deg, transparent 0, #000 8%, #000 92%, transparent);
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; transition-delay: 0s !important; }
