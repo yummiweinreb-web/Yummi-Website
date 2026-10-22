@@ -333,7 +333,7 @@
         setTimeout(() => { top.style.zIndex = ""; place(); busy = false; }, 80);
       }, 950);
     };
-    const start = () => { if (!timer) timer = setInterval(flip, 3200); };
+    const start = () => { if (!timer) { timer = setInterval(flip, 3000); setTimeout(flip, 650); } };
     const stop = () => { clearInterval(timer); timer = null; };
     new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; visible ? start() : stop(); }), { threshold: .25 }).observe(deck);
     deck.addEventListener("pointerenter", stop); deck.addEventListener("pointerleave", () => visible && start());
