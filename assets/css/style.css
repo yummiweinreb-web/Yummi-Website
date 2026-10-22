@@ -508,7 +508,7 @@ picture { display: contents; }
   .nav.is-scrolled { top: 0; }
   .nav.is-scrolled .nav__pill { height: calc(80 * var(--n)); inset: calc(10 * var(--n)) calc(80 * var(--n)) auto; background: rgba(10, 2, 32, .8); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 0 0 1px rgba(110, 50, 255, .5) inset, 0 0 18px rgba(90, 30, 255, .3); }
   .nav.is-hidden { transform: translate(-50%, -120%); }
-  .nav__logo { position: absolute; right: calc(27 * var(--n)); top: calc(11 * var(--n)); width: calc(137 * var(--n)); margin: 0; }
+  .nav__logo { position: absolute; right: calc(137 * var(--n)); top: calc(21 * var(--n)); z-index: 2; width: calc(137 * var(--n)); margin: 0; }
   .nav__links, .btn--nav { display: none; }
   .nav__burger { position: absolute; left: calc(24 * var(--n)); top: calc(22 * var(--n)); display: grid; align-content: center; gap: calc(10 * var(--n)); width: calc(36 * var(--n)); height: calc(36 * var(--n)); padding: 0; background: none; border: 0; cursor: pointer; z-index: 2; }
   .nav__burger span { display: block; height: 2px; width: 100%; background: #fff; border-radius: 2px; transition: transform .5s var(--ease), opacity .3s, width .5s var(--ease); }
@@ -555,7 +555,7 @@ picture { display: contents; }
   .about__img--d { display: none; }
   .about__img--m { display: block; -webkit-mask-image: radial-gradient(72% 75% at 50% 50%, #000 72%, transparent 100%); mask-image: radial-gradient(72% 75% at 50% 50%, #000 72%, transparent 100%); }
   .about__body { font-weight: 400; }
-  .about__sub { left: 0; right: 0; top: calc(495 * var(--n)); font-size: calc(33.6 * var(--n)); text-align: center; }
+  .about__sub { left: 0; right: 0; top: calc(495 * var(--n)); font-size: calc(22 * var(--n)); text-align: center; }
   .about__body { left: 0; right: 0; top: calc(533 * var(--n)); font-size: calc(24.5 * var(--n)); line-height: calc(30.5 * var(--n)); text-align: center; }
   .about__btn { right: calc(184 * var(--n)); top: calc(647 * var(--n)); width: calc(366 * var(--n)); height: calc(62 * var(--n)); font-size: calc(22 * var(--n)); }
   .about__btn .btn__arrow { margin-inline-start: calc(40 * var(--n)); }
@@ -676,8 +676,9 @@ picture { display: contents; }
 /* ---------- fixed type sizes (desktop): body 20px · sub-headings 40px · main headings 60px ---------- */
 @media (min-width: 1024px) {
   .hero__title, .about__title, .process__title, .work__title, .contact__title, .talk__title { font-size: 60px; line-height: 1.02; }
-  .about__sub, .step__title, .project__name { font-size: 40px; line-height: 1.1; }
-  .about__body, .step__text, .project__tag, .contact__sub, .talk__sub { font-size: 20px; line-height: 1.45; }
+  .step__title, .project__name { font-size: 40px; line-height: 1.1; }
+  .about__sub { font-size: 20px; line-height: 1.25; }
+  .about__body, .step__text, .project__tag, .contact__sub, .talk__sub { font-size: 17px; line-height: 1.5; }
 }
 
 /* soft edges now that the composition is narrower than the window (desktop) */
@@ -733,3 +734,18 @@ picture { display: contents; }
 
 /* phones: the composition already fills the window, so keep clipping sideways overflow */
 @media (max-width: 640px) { main { overflow-x: clip; } }
+
+/* ---------- desktop nav: slim menu pinned to the left corner, logo pinned to the right corner ---------- */
+@media (min-width: 1024px) {
+  .nav { left: 0; right: 0; width: auto; top: calc(26 * var(--a)); transform: none; display: flex; justify-content: flex-start; }
+  .nav.is-scrolled { top: calc(12 * var(--a)); }
+  .nav.is-hidden { transform: translateY(-160%); }
+  .nav__pill { --ph: calc(50 * var(--a)); position: static; margin-right: auto; margin-left: calc(28 * var(--a)); width: max-content;
+    padding-inline: calc(22 * var(--a)) calc(var(--ph) / 2 - 16 * var(--a)); }
+  .nav.is-scrolled .nav__pill { --ph: calc(44 * var(--a)); }
+  .nav__pill::before { display: none; }
+  .nav__logo { position: absolute; right: calc(30 * var(--a)); top: 50%; transform: translateY(-50%); width: calc(92 * var(--a)); margin: 0; }
+  .nav__links { gap: calc(30 * var(--a)); font-size: calc(12 * var(--a)); }
+  .btn--nav { margin-inline-start: calc(30 * var(--a)); height: calc(32 * var(--a)); width: calc(112 * var(--a)); padding-inline: calc(12 * var(--a)) calc(3 * var(--a)); font-size: calc(12 * var(--a)); }
+  .btn--nav .btn__circle { width: calc(26 * var(--a)); height: calc(26 * var(--a)); }
+}
