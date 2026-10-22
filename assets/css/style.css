@@ -886,3 +886,23 @@ picture { display: contents; }
   .work--home .work__title { inset-inline: 0; text-align: center; }
   .work--home .work__script { left: calc(50% - 147 * var(--p)); }
 }
+
+/* ---- round 3 ---- */
+/* hero headline: same size as the about sub-line, 30px above the buttons */
+@media (min-width: 1024px) {
+  .hero__title { font-size: 20px; line-height: 1.25; }
+  .hero__ctas { top: calc(574 * var(--a) + 25px + 30px); }
+}
+@media (max-width: 1023.98px) {
+  .hero__title { font-size: calc(22 * var(--n)); line-height: calc(28 * var(--n)); }
+  .hero__ctas { top: calc(546 * var(--n) + 56 * var(--n) + 30px); }
+}
+/* logo +25% */
+.nav__logo { width: calc(115 * var(--a)); }
+@media (min-width: 1024px) { .nav__logo { width: calc(115 * var(--a)); } }
+@media (max-width: 1023.98px) { .nav__logo { width: calc(171 * var(--n)); } }
+/* process: no numerals – the purple dots lead each step */
+.step__num { display: none !important; }
+@media (min-width: 1024px) { .step__line i { top: calc(5.5 * var(--a)); } .step__dot { margin-top: 0; } }
+@media (min-width: 1024px) { .process__btn { top: calc(420 * var(--a)); } }
+@media (max-width: 1023.98px) { .hero { margin-top: 0; } }
