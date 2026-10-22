@@ -72,7 +72,7 @@ button, input, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 8px; }
 
 main, .footer { position: relative; width: var(--W); margin-inline: auto; }
-main { overflow-x: clip; }
+main { overflow-x: visible; }   /* backgrounds bleed to the window edges; body hides any horizontal overflow */
 .mmenu { display: none; }
 section { position: relative; }
 
@@ -219,8 +219,8 @@ body:not(.is-loading) .loader { opacity: 0; visibility: hidden; }
 .hero__script { left: calc(232 * var(--a)); top: calc(150 * var(--a)); width: calc(418 * var(--a)); height: calc(60 * var(--a)); z-index: 3; }
 .hero__art {
   position: absolute; left: 0; top: 0; width: calc(860 * var(--a)); height: calc(700 * var(--a)); overflow: hidden;
-  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%), linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
-          mask-image: linear-gradient(180deg, #000 88%, transparent 100%), linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%), linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 88%, transparent 100%), linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%);
   -webkit-mask-composite: source-in; mask-composite: intersect;
 }
 .hero__art img, .hero__art .snake { display: block; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 45%;
@@ -690,6 +690,29 @@ picture { display: contents; }
   }
 }
 
+/* ---------- full-bleed backgrounds: the ambient light of each scene runs to the window edges ---------- */
+.hero::before, .contact::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  left: 50%; width: var(--vw); transform: translateX(-50%);
+  background-repeat: no-repeat; background-size: 100% 100%;
+}
+.hero::before {
+  top: 0; height: calc(700 * var(--a)); background-image: url("../img/maps/hero-bg-plate.webp");
+  -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%); mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
+}
+.contact::before {
+  top: calc(80 * var(--c)); height: calc(700 * var(--c)); background-image: url("../img/maps/tube-plate.webp");
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 88%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 88%, transparent 100%);
+}
+@media (max-width: 1023.98px) {
+  .hero::before { height: calc(600 * var(--n)); background-image: url("../img/maps/hero-bg-m-plate.webp"); }
+  .contact::before { top: calc(230 * var(--q)); height: calc(770 * var(--q)); background-image: url("../img/maps/tube-m-plate.webp"); }
+}
+@media (min-width: 641px) and (max-width: 1023.98px) {
+  .hero__art { -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%), linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%); mask-image: linear-gradient(180deg, #000 80%, transparent 100%), linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+  .contact__tube img, .contact__tube .snake { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 90%, transparent 100%), linear-gradient(180deg, transparent 0, #000 8%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 90%, transparent 100%), linear-gradient(180deg, transparent 0, #000 8%, #000 90%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; transition-delay: 0s !important; }
   html { scroll-behavior: auto; }
@@ -703,3 +726,6 @@ picture { display: contents; }
 .script--pen .script__flourish--r { transition-delay: 1.9s; }
 .script--pen .script__flourish--l { transition-duration: 1s; }
 .smile { display: inline-block; direction: ltr; unicode-bidi: isolate-override; }
+
+/* phones: the composition already fills the window, so keep clipping sideways overflow */
+@media (max-width: 640px) { main { overflow-x: clip; } }
