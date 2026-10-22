@@ -145,7 +145,7 @@
   /* ------- hero: empty laptop first, then the snakes crawl in from the left (WebGL layers) ------- */
   function makeHero() {
     const img = $(".hero__art img");
-    if (!img || reduce || !matchMedia("(min-width:1024px)").matches) return null;
+    if (!img || reduce) return null;
     const holder = img.closest("picture").parentElement;
     const cv = document.createElement("canvas");
     cv.className = "snake"; cv.width = 1720; cv.height = 1400; cv.setAttribute("aria-hidden", "true");
@@ -155,34 +155,34 @@
     const pr = gl.createProgram();
     gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
     gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
-uniform sampler2D pon,snk,orig,tm,al;uniform float p,f;
+uniform sampler2D pon,pu,re,tm;uniform float p,f;
 void main(){
-  vec3 T=texture2D(tm,v).rgb, A=texture2D(al,v).rgb;
+  vec3 T=texture2D(tm,v).rgb;
   float P=clamp((p-.03)/.97,0.,1.);
-  float d1=P-T.r;
-  float w1=clamp(d1/.03,0.,1.)*A.r;
-  float q=clamp((P-.36)/.64,0.,1.);
-  float d2=q*1.04-T.g;
-  float w2=clamp(d2/.03,0.,1.)*A.g;
-  vec3 o=texture2D(orig,v).rgb;
+  vec4 a=texture2D(pu,v);
+  float w1=clamp((P-T.r)/.02,0.,1.)*a.a;
+  float q=clamp((P-.3)/.7,0.,1.);
+  vec4 b=texture2D(re,v);
+  float w2=clamp((q*1.04-T.g)/.02,0.,1.)*b.a;
   vec3 c=texture2D(pon,v).rgb;
-  c=mix(c,texture2D(snk,v).rgb,w1);
-  c=mix(c,o,w2);
+  c=mix(c,a.rgb,w1);
+  c=mix(c,b.rgb,w2);
   gl_FragColor=vec4(c,1.);}`));
     gl.linkProgram(pr); gl.useProgram(pr);
     const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     const P = gl.getUniformLocation(pr, "p"), F = gl.getUniformLocation(pr, "f");
     const base = "assets/img/hero/";
     const h = { p: 0, f: 0, started: false };
     const draw = () => { gl.uniform1f(P, h.p); gl.uniform1f(F, h.f); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-    h.ready = Promise.all([base + "plate-on.webp", base + "snakes.webp", img.currentSrc || img.src, base + "times.png", base + "alpha.png"].map(loadImg)).then(ims => {
-      ["pon", "snk", "orig", "tm", "al"].forEach((n, i) => {
+    h.ready = Promise.all([base + "plate-on.webp", base + "pur.webp", base + "red.webp", base + "times.png"].map(loadImg)).then(ims => {
+      ["pon", "pu", "re", "tm"].forEach((n, i) => {
         gl.activeTexture(gl.TEXTURE0 + i);
         const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, ims[i]);
+        const fm = i === 1 || i === 2 ? gl.RGBA : gl.RGB;
+        gl.texImage2D(gl.TEXTURE_2D, 0, fm, fm, gl.UNSIGNED_BYTE, ims[i]);
         [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
         [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
         gl.uniform1i(gl.getUniformLocation(pr, n), i);
