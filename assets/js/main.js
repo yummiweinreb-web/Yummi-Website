@@ -155,14 +155,15 @@
     const pr = gl.createProgram();
     gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
     gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
-uniform sampler2D plate,snk,orig,tm,al;uniform float p,f;
+uniform sampler2D plate,snk,orig,tm,al,wp;uniform float p,f;
 void main(){
   vec3 T=texture2D(tm,v).rgb, A=texture2D(al,v).rgb;
-  float w1=clamp((p-T.r)/.07,0.,1.)*A.r;
-  float q=clamp((p-.30)/.70,0.,1.);
-  float w2=clamp((q*1.07-T.g)/.07,0.,1.)*A.g;
+  float w1=clamp((p-T.r)/.045,0.,1.)*A.r;
+  float q=clamp((p-.22)/.78,0.,1.);
+  float w2=clamp((q*1.04-T.g)/.03,0.,1.)*A.g;
   vec3 o=texture2D(orig,v).rgb;
-  vec3 c=mix(texture2D(plate,v).rgb,texture2D(snk,v).rgb,w1);
+  vec3 c=mix(texture2D(plate,v).rgb,texture2D(wp,v).rgb,clamp(p/.10,0.,1.)*A.b);
+  c=mix(c,texture2D(snk,v).rgb,w1);
   c=mix(c,o,w2);
   gl_FragColor=vec4(mix(c,o,f),1.);}`));
     gl.linkProgram(pr); gl.useProgram(pr);
@@ -174,8 +175,8 @@ void main(){
     const base = "assets/img/hero/";
     const h = { p: 0, f: 0, started: false };
     const draw = () => { gl.uniform1f(P, h.p); gl.uniform1f(F, h.f); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-    h.ready = Promise.all([base + "plate.webp", base + "snakes.webp", img.currentSrc || img.src, base + "times.png", base + "alpha.png"].map(loadImg)).then(ims => {
-      ["plate", "snk", "orig", "tm", "al"].forEach((n, i) => {
+    h.ready = Promise.all([base + "plate.webp", base + "snakes.webp", img.currentSrc || img.src, base + "times.png", base + "alpha.png", base + "screen.webp"].map(loadImg)).then(ims => {
+      ["plate", "snk", "orig", "tm", "al", "wp"].forEach((n, i) => {
         gl.activeTexture(gl.TEXTURE0 + i);
         const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, ims[i]);
@@ -183,7 +184,8 @@ void main(){
         [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
         gl.uniform1i(gl.getUniformLocation(pr, n), i);
       });
-      gl.viewport(0, 0, cv.width, cv.height); draw();
+      gl.viewport(0, 0, cv.width, cv.height);
+      const hp = new URLSearchParams(location.search).get("hp"); if (hp !== null) { h.started = true; h.p = +hp; } draw();
       img.closest("picture").after(cv); img.closest("picture").style.display = "none";
     }).catch(() => { h.failed = true; });
     h.play = (delay = 0) => {
