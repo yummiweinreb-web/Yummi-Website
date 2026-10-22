@@ -781,3 +781,6 @@ picture { display: contents; }
 }
 .page-work { padding-top: calc(78 * var(--a)); }
 @media (max-width: 1023.98px) { .page-work { padding-top: calc(60 * var(--n)); } }
+
+/* hero: pulled up 40px (script word + everything beneath it) */
+.hero { margin-top: -40px; }
