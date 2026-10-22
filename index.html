@@ -38,7 +38,7 @@
       <nav class="nav__links" aria-label="ניווט ראשי">
         <a href="#process" data-spy="process">מה אני עושה</a>
         <a href="#about" data-spy="about">מי זאת אני</a>
-        <a href="#work" data-spy="work">עבודות עם אופי</a>
+        <a href="work.html" data-spy="work">עבודות עם אופי</a>
         <a href="#contact" data-spy="contact">נדבר?</a>
         <svg class="nav__squiggle" viewBox="0 0 64 8" preserveAspectRatio="none" aria-hidden="true"><path d="M1 5.5C12 2.5 22 2 33 3.4S53 6.6 63 3"/></svg>
       </nav>
@@ -57,7 +57,7 @@
     <nav class="mmenu__links" aria-label="תפריט נייד">
       <a href="#process"><small>01</small>מה אני עושה</a>
       <a href="#about"><small>02</small>מי זאת אני</a>
-      <a href="#work"><small>03</small>עבודות עם אופי</a>
+      <a href="work.html"><small>03</small>עבודות עם אופי</a>
       <a href="#contact"><small>04</small>נדבר?</a>
     </nav>
     <a class="btn btn--primary" href="#contact"><span class="btn__label">יש לכם עסק? בואו נדבר</span><span class="btn__arrow"><svg viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span></a>
@@ -86,7 +86,7 @@
           <span class="btn__label">יאללה, נעשה לכם אתר</span>
           <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
         </a>
-        <a class="btn btn--ghost magnetic" href="#work"><span class="btn__label">תראי לי עבודות שלך</span></a>
+        <a class="btn btn--ghost magnetic" href="work.html"><span class="btn__label">תראי לי עבודות שלך</span></a>
       </div>
 
       <a class="hero__scroll" href="#about" aria-label="גללו למטה"><span></span></a>
@@ -156,150 +156,44 @@
     </section>
 
     <!-- ============ WORK ============ -->
-    <section class="work" id="work">
-      <svg class="work__waves" viewBox="0 0 736 2135" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <filter id="neon" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="b1"/>
-            <feGaussianBlur stdDeviation="12" result="b2"/>
-            <feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <linearGradient id="waveg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#7b2bff"/>
-            <stop offset=".5" stop-color="#5a1ff8"/>
-            <stop offset="1" stop-color="#8f3bff"/>
-          </linearGradient>
-        </defs>
-        <path class="wave wave--l" d="M150 170C80 170 30 210 36 290 44 400 70 470 46 560 22 650 -6 700 10 790 26 880 60 960 40 1050 20 1140 -10 1200 8 1290 26 1380 58 1450 38 1540 18 1630 -8 1700 6 1790 20 1880 50 1960 30 2135"/>
-        <path class="wave wave--r" d="M640 400C690 430 720 520 700 610 680 700 610 760 630 860 650 960 720 1000 710 1100 700 1200 620 1240 640 1340 660 1440 730 1480 716 1580 702 1680 630 1720 650 1820 670 1920 736 1960 736 2135"/>
-      </svg>
-
+    <section class="work work--home" id="work">
       <div class="work__head">
         <div class="script work__script" data-script="Selected work" data-reveal aria-hidden="true"></div>
-        <h2 class="work__title" data-reveal>פחות דיבורים<i class="dot dot--red">.</i> יותר קליקים<i class="dot dot--lime">.</i></h2>
+        <h2 class="work__title" data-reveal>עבודות עם אופי<i class="dot dot--red">.</i></h2>
       </div>
 
-      <div class="projects">
-        <!-- 01 -->
-        <article class="project" data-reveal="project">
-          <div class="project__info">
-            <div class="project__num"><span class="project__rule"></span><b>01</b></div>
-            <h3 class="project__name">רבבה</h3>
-            <p class="project__tag">אתר פוטונני<i class="dot dot--red">.</i> בלי פילטר.</p>
-            <a class="btn btn--primary btn--sm magnetic" href="https://revava.co.il" target="_blank" rel="noopener">
-              <span class="btn__label">לראות את האתר המלא</span>
-              <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
-            </a>
-          </div>
-          <div class="project__media">
-            <a class="browser" href="https://revava.co.il" target="_blank" rel="noopener" aria-label="רבבה – פתיחת האתר">
-              <span class="browser__bar"><i></i><i></i><i></i><b></b><b></b><b></b></span>
-              <span class="browser__screen"><img src="assets/img/work/revava.webp" alt="צילום מסך – אתר רבבה" width="1620" height="960" loading="lazy"></span>
-            </a>
-            <a class="project__url" href="https://revava.co.il" target="_blank" rel="noopener"><span class="link-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4l-1.1 1.1M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/></svg></span>revava.co.il</a>
-          </div>
-        </article>
-
-        <!-- 02 -->
-        <article class="project" data-reveal="project">
-          <div class="project__info">
-            <div class="project__num"><span class="project__rule"></span><b>02</b></div>
-            <h3 class="project__name">מרים ישראלי</h3>
-            <p class="project__tag">אתר עם נשמה<i class="dot dot--red">.</i> ורואים עליו.</p>
-            <a class="btn btn--primary btn--sm magnetic" href="https://miriam-israeli.co.il" target="_blank" rel="noopener">
-              <span class="btn__label">לראות את האתר המלא</span>
-              <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
-            </a>
-          </div>
-          <div class="project__media">
-            <a class="browser" href="https://miriam-israeli.co.il" target="_blank" rel="noopener" aria-label="מרים ישראלי – פתיחת האתר">
-              <span class="browser__bar"><i></i><i></i><i></i><b></b><b></b><b></b></span>
-              <span class="browser__screen"><img src="assets/img/work/miriam-israeli.webp" alt="צילום מסך – אתר מרים ישראלי" width="1644" height="952" loading="lazy"></span>
-            </a>
-            <a class="project__url" href="https://miriam-israeli.co.il" target="_blank" rel="noopener"><span class="link-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4l-1.1 1.1M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/></svg></span>miriam-israeli.co.il</a>
-          </div>
-        </article>
-
-        <!-- 03 -->
-        <article class="project" data-reveal="project">
-          <div class="project__info">
-            <div class="project__num"><span class="project__rule"></span><b>03</b></div>
-            <h3 class="project__name">עטרת גורן</h3>
-            <p class="project__tag">רך בעיניים<i class="dot dot--red">.</i> חד בחוויה.</p>
-            <a class="btn btn--primary btn--sm magnetic" href="https://ateretgoren.co.il" target="_blank" rel="noopener">
-              <span class="btn__label">לראות את האתר המלא</span>
-              <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
-            </a>
-          </div>
-          <div class="project__media">
-            <a class="browser" href="https://ateretgoren.co.il" target="_blank" rel="noopener" aria-label="עטרת גורן – פתיחת האתר">
-              <span class="browser__bar"><i></i><i></i><i></i><b></b><b></b><b></b></span>
-              <span class="browser__screen"><img src="assets/img/work/ateret-goren.webp" alt="צילום מסך – אתר עטרת גורן" width="1648" height="972" loading="lazy"></span>
-            </a>
-            <a class="project__url" href="https://ateretgoren.co.il" target="_blank" rel="noopener"><span class="link-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4l-1.1 1.1M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/></svg></span>ateretgoren.co.il</a>
-          </div>
-        </article>
-
-        <!-- 04 -->
-        <article class="project" data-reveal="project">
-          <div class="project__info">
-            <div class="project__num"><span class="project__rule"></span><b>04</b></div>
-            <h3 class="project__name">סטודיו מנטה</h3>
-            <p class="project__tag">מרענן<i class="dot dot--red">.</i> ובלי סוכר.</p>
-            <a class="btn btn--primary btn--sm magnetic" href="https://menta-studio.co.il" target="_blank" rel="noopener">
-              <span class="btn__label">לראות את האתר המלא</span>
-              <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
-            </a>
-          </div>
-          <div class="project__media">
-            <a class="browser" href="https://menta-studio.co.il" target="_blank" rel="noopener" aria-label="סטודיו מנטה – פתיחת האתר">
-              <span class="browser__bar"><i></i><i></i><i></i><b></b><b></b><b></b></span>
-              <span class="browser__screen"><img src="assets/img/work/menta-studio.webp" alt="צילום מסך – אתר סטודיו מנטה" width="1648" height="976" loading="lazy"></span>
-            </a>
-            <a class="project__url" href="https://menta-studio.co.il" target="_blank" rel="noopener"><span class="link-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4l-1.1 1.1M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/></svg></span>menta-studio.co.il</a>
-          </div>
-        </article>
-
-        <!-- 05 -->
-        <article class="project" data-reveal="project">
-          <div class="project__info">
-            <div class="project__num"><span class="project__rule"></span><b>05</b></div>
-            <h3 class="project__name">נקודה טובה</h3>
-            <p class="project__tag">הבמה שלהם<i class="dot dot--red">.</i> הוואו עליי.</p>
-            <a class="btn btn--primary btn--sm magnetic" href="https://nekuda-tova.co.il" target="_blank" rel="noopener">
-              <span class="btn__label">לראות את האתר המלא</span>
-              <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
-            </a>
-          </div>
-          <div class="project__media">
-            <a class="browser" href="https://nekuda-tova.co.il" target="_blank" rel="noopener" aria-label="נקודה טובה – פתיחת האתר">
-              <span class="browser__bar"><i></i><i></i><i></i><b></b><b></b><b></b></span>
-              <span class="browser__screen"><img src="assets/img/work/nekuda-tova.webp" alt="צילום מסך – אתר נקודה טובה" width="1644" height="968" loading="lazy"></span>
-            </a>
-            <a class="project__url" href="https://nekuda-tova.co.il" target="_blank" rel="noopener"><span class="link-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4l-1.1 1.1M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/></svg></span>nekuda-tova.co.il</a>
-          </div>
-        </article>
-
-        <!-- 06 -->
-        <article class="project" data-reveal="project">
-          <div class="project__info">
-            <div class="project__num"><span class="project__rule"></span><b>06</b></div>
-            <h3 class="project__name">אפרת פרידמן</h3>
-            <p class="project__tag">מספרים ברצינות<i class="dot dot--red">.</i><br>עיצוב בלי יובש<i class="dot dot--red">.</i></p>
-            <a class="btn btn--primary btn--sm magnetic" href="https://efrattfriedman.co.il" target="_blank" rel="noopener">
-              <span class="btn__label">לראות את האתר המלא</span>
-              <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
-            </a>
-          </div>
-          <div class="project__media">
-            <a class="browser" href="https://efrattfriedman.co.il" target="_blank" rel="noopener" aria-label="אפרת פרידמן – פתיחת האתר">
-              <span class="browser__bar"><i></i><i></i><i></i><b></b><b></b><b></b></span>
-              <span class="browser__screen"><img src="assets/img/work/efrat-friedman.webp" alt="צילום מסך – אתר אפרת פרידמן" width="1644" height="968" loading="lazy"></span>
-            </a>
-            <a class="project__url" href="https://efrattfriedman.co.il" target="_blank" rel="noopener"><span class="link-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4l-1.1 1.1M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/></svg></span>efrattfriedman.co.il</a>
-          </div>
-        </article>
+      <div class="gallery">
+        <a class="gcard gcard--1" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/ngm.webp" alt="צילום מסך – NGM – Next Generation Metals" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">NGM – Next Generation Metals</span>
+        </a>
+        <a class="gcard gcard--2" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/efrat-friedman.webp" alt="צילום מסך – אפרת פרידמן – יועצת מס" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">אפרת פרידמן – יועצת מס</span>
+        </a>
+        <a class="gcard gcard--3" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/menta.webp" alt="צילום מסך – סטודיו מנטה" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">סטודיו מנטה</span>
+        </a>
+        <a class="gcard gcard--4" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/nekuda-tova.webp" alt="צילום מסך – נקודה טובה" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">נקודה טובה</span>
+        </a>
+        <a class="gcard gcard--5" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/ateret-goren.webp" alt="צילום מסך – עטרת גורן" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">עטרת גורן</span>
+        </a>
+        <a class="gcard gcard--6" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/kislowicz.webp" alt="צילום מסך – Kislowicz Consulting" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">Kislowicz Consulting</span>
+        </a>
+        <a class="gcard gcard--7" href="work.html" data-reveal>
+          <span class="gcard__shot"><img src="assets/img/gallery/revava.webp" alt="צילום מסך – רבבה" width="1200" height="662" loading="lazy"></span>
+          <span class="gcard__name">רבבה</span>
+        </a>
       </div>
+      <div class="gallery__more"><a class="btn btn--primary magnetic" href="work.html"><span class="btn__label">לכל העבודות</span><span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span></a></div>
+
     </section>
 
     <!-- ============ CONTACT ============ -->
@@ -371,7 +265,7 @@
         <h3>קפיצה קטנה</h3>
         <a href="#process">מה אני עושה</a>
         <a href="#about">מי זאת יאמי</a>
-        <a href="#work">עבודות עם אופי</a>
+        <a href="work.html">עבודות עם אופי</a>
       </div>
       <span class="footer__vsep" aria-hidden="true"></span>
       <div class="footer__col footer__contact">
