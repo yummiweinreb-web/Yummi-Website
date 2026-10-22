@@ -169,10 +169,7 @@ void main(){
   vec3 c=mix(texture2D(plate,v).rgb,texture2D(pon,v).rgb,on);
   c=mix(c,texture2D(snk,v).rgb,w1);
   c=mix(c,o,w2);
-  float g1=step(0.,d1)*exp(-d1/.05)*A.r*step(0.001,P)*(1.-step(.99,P));
-  float g2=step(0.,d2)*exp(-d2/.05)*A.g*step(0.001,q)*(1.-step(.99,q));
-  c+=g1*vec3(.55,.30,.95)*(1.-w2)+g2*vec3(.95,.45,.35);
-  gl_FragColor=vec4(mix(c,o,f),1.);}`));
+  gl_FragColor=vec4(c,1.);}`));
     gl.linkProgram(pr); gl.useProgram(pr);
     const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -203,9 +200,8 @@ void main(){
         const tick = now => {
           const k = Math.min(1, Math.max(0, (now - t0) / D));
           h.p = ease(k) * 1.02;
-          h.f = Math.min(1, Math.max(0, (now - t0 - D) / 700));
           draw();
-          if (h.f < 1) requestAnimationFrame(tick);
+          if (k < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
       });
