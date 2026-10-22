@@ -405,6 +405,7 @@ void main(){
   const waves = $$(".wave");
   waves.forEach(p => { const len = Math.ceil(p.getTotalLength()); p.style.setProperty("--len", len); p.dataset.len = len; });
   const work = $("#work");
+  const projMedia = $$(".project__media");
 
   const progress = $(".progress i");
 
@@ -433,6 +434,19 @@ void main(){
       const t = Math.min(1, Math.max(0, (vh * .85 - r.top) / (r.height * .9)));
       waves.forEach(p => p.style.strokeDashoffset = (p.dataset.len * (1 - t)).toFixed(1));
     }
+
+    // project screens: tilt back in 3D, then flatten and grow as they reach the middle of the window
+    if (!reduce) projMedia.forEach(m => {
+      const r = m.getBoundingClientRect();
+      const d = Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh * .52) / (vh * .62)));
+      const a = Math.abs(d);
+      const e = a * a;
+      m.style.setProperty("--st", (d > 0 ? d * 46 : d * 24).toFixed(2) + "deg");
+      m.style.setProperty("--sy", (d * 22).toFixed(1) + "deg");
+      m.style.setProperty("--ss", (1 - e * .2).toFixed(3));
+      m.style.setProperty("--so", Math.max(0, Math.min(1, 1.35 - a * 1.1)).toFixed(3));
+      m.style.setProperty("--sz", ((1 - Math.min(1, a * 1.4)) * 0 + e * .16).toFixed(3));
+    });
 
     // hero art drifts on scroll
     if (y < vh * 1.2) { root.style.setProperty("--hs", (y * .18).toFixed(1) + "px"); root.style.setProperty("--hz", (y / vh * .05).toFixed(4)); }

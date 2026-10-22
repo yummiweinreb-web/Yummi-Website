@@ -455,8 +455,11 @@ body:not(.is-loading) .loader { opacity: 0; visibility: hidden; }
 .js [data-reveal="talk"] { transform: none; clip-path: inset(0 100% 0 0); transition: clip-path 2.2s var(--ease) .2s, opacity .6s; }
 .js [data-reveal="talk"].is-in { clip-path: inset(0 0 0 0); }
 .js [data-reveal="project"] { transform: translateY(60px); }
-.js [data-reveal="project"] .project__media { transform: translateX(-50px) rotate(-1.5deg); opacity: 0; transition: transform 1.3s var(--ease) .1s, opacity 1s var(--ease) .1s; }
-.js [data-reveal="project"].is-in .project__media { transform: none; opacity: 1; }
+.js [data-reveal="project"] .project__media { transform: perspective(1300px) rotateX(var(--st, 0deg)) rotateY(var(--sy, 0deg)) scale(var(--ss, 1)); transform-origin: 50% 60%; opacity: var(--so, 1); will-change: transform, opacity; }
+.js [data-reveal="project"] .project__media .browser__screen img { transform: scale(calc(1.001 + var(--sz, 0))); }
+.js [data-reveal="project"] .project__media .browser:hover .browser__screen img { transform: scale(1.045); }
+.project__info { position: relative; z-index: 3; }
+.project__media { z-index: 1; }
 .js [data-reveal="steps"] { transform: none; filter: none; opacity: 1; }
 .js [data-reveal="steps"] .step { opacity: 0; transform: translateY(30px); transition: opacity .9s var(--ease), transform 1s var(--ease); }
 .js [data-reveal="steps"] .step:nth-child(3) { transition-delay: .35s; }
