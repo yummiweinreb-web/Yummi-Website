@@ -3,8 +3,8 @@
   "use strict";
 
   /* ------- settings: fill in the real details ------- */
-  const CONTACT_EMAIL = "hello@yummi.co.il";   // where the form sends to (mailto fallback)
-  const FORM_ENDPOINT = "";                     // optional: Formspree / Make / Zapier webhook URL
+  const CONTACT_EMAIL = "yummiweinreb@gmail.com";   // where the form sends to (mailto fallback)
+  const FORM_ENDPOINT = "https://formsubmit.co/ajax/yummiweinreb@gmail.com";   // FormSubmit: sends each message to this inbox
 
   const root = document.documentElement;
   const body = document.body;
@@ -309,34 +309,71 @@
   }));
 
 
+
+  /* ------- hero: centre the content block (script word → buttons) vertically in the first screen (desktop) ------- */
+  (() => {
+    const hero = $(".hero"), sc = $(".hero__script", hero), ct = $(".hero__ctas", hero);
+    if (!hero || !sc || !ct) return;
+    const fit = () => {
+      if (innerWidth < 1024) { hero.style.removeProperty("--hero-shift"); return; }
+      hero.style.setProperty("--hero-shift", "0px");
+      const y = scrollY, t = sc.getBoundingClientRect().top + y, b = ct.getBoundingClientRect().bottom + y;
+      hero.style.setProperty("--hero-shift", Math.round(innerHeight / 2 - (t + b) / 2) + "px");
+    };
+    fit(); addEventListener("resize", fit); addEventListener("load", fit);
+    window.__fitHero = fit;
+  })();
+
+
+  /* ------- talk video: big play button ------- */
+  (() => {
+    const box = $(".talk__video"), v = box && $("video", box), b = box && $(".talk__play", box);
+    if (!v || !b) return;
+    b.addEventListener("click", () => v.play());
+    v.addEventListener("play", () => box.classList.add("is-playing"));
+    v.addEventListener("pause", () => box.classList.remove("is-playing"));
+    v.addEventListener("ended", () => box.classList.remove("is-playing"));
+  })();
+
   /* ------- projects deck: tilted pile, the top screen flips to the back every few seconds ------- */
   (() => {
+    /* projects deck: scrubbed by scroll — the section pins, wheel/touch scroll flips the screens (reverses on scroll up) */
     const deck = $(".deck"); if (!deck) return;
-    const cards = $$(".gcard", deck), n = cards.length; if (n < 2) return;
-    let order = cards.map((_, i) => i);          // order[0] = top card
-    const place = () => order.forEach((ci, slot) => { const c = cards[ci]; c.style.setProperty("--i", slot); c.dataset.far = slot > 4 ? "1" : ""; });
-    place();
-    if (reduce) return;
-    let timer = null, busy = false, visible = false;
-    const flip = () => {
-      if (busy || !visible || document.hidden) return; busy = true;
-      const top = cards[order[0]];
-      top.classList.add("is-out");
-      const rest = order.slice(1); rest.forEach((ci, k) => { cards[ci].style.setProperty("--i", k); cards[ci].dataset.far = k > 4 ? "1" : ""; });
-      setTimeout(() => {
-        top.style.zIndex = "0";                    // slip behind the pile
-        top.classList.remove("is-out"); top.classList.add("is-back");
-        top.style.setProperty("--i", n - 1); top.dataset.far = "1";
-        void top.offsetWidth;
-        top.classList.remove("is-back");
-        order = rest.concat(order[0]);
-        setTimeout(() => { top.style.zIndex = ""; place(); busy = false; }, 80);
-      }, 950);
+    const sec = deck.closest(".work--home"), pin = $(".work__pin", sec), anchor = $(".work__anchor", sec), spacer = $(".work__spacer", sec);
+    const cards = $$(".gcard", deck), n = cards.length, steps = n - 1;
+    let range = 1, pinTop = 0, cur = 0, tgt = 0, raf = 0;
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const measure = () => {
+      const vh = innerHeight, ph = pin.offsetHeight;
+      pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph);
+      pin.style.top = pinTop + "px";
+      range = Math.round(steps * Math.max(260, vh * .42));
+      spacer.style.height = range + "px";
     };
-    const start = () => { if (!timer) { timer = setInterval(flip, 3000); setTimeout(flip, 650); } };
-    const stop = () => { clearInterval(timer); timer = null; };
-    new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; visible ? start() : stop(); }), { threshold: .25 }).observe(deck);
-    deck.addEventListener("pointerenter", stop); deck.addEventListener("pointerleave", () => visible && start());
+    const target = () => clamp((pinTop - anchor.getBoundingClientRect().top) / range) * steps;
+    const paint = t => cards.forEach((c, k) => {
+      const r = k - t;
+      const f = r < 0 ? clamp(-r) : 0, i = Math.max(0, r);
+      const o = r <= -1 ? 0 : (1 - clamp(f * 1.35)) * clamp((5 - i) / 1.6) * (1 - i * .1);
+      c.style.setProperty("--i", i.toFixed(3));
+      c.style.setProperty("--f", f.toFixed(3));
+      c.style.opacity = Math.max(0, o).toFixed(3);
+      c.style.zIndex = 30 - k;
+      c.style.visibility = o <= .002 ? "hidden" : "";
+    });
+    const loop = () => {
+      tgt = target();
+      cur += (tgt - cur) * .16;
+      if (Math.abs(tgt - cur) < .0008) cur = tgt;
+      paint(cur);
+      raf = (cur !== tgt) ? requestAnimationFrame(loop) : 0;
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+    measure(); paint(0);
+    addEventListener("scroll", kick, { passive: true });
+    addEventListener("resize", () => { measure(); kick(); });
+    addEventListener("load", () => { measure(); kick(); });
+    if (window.ResizeObserver) new ResizeObserver(() => { measure(); kick(); }).observe(pin);
   })();
 
   /* ------- nav: scrolled state, hide on scroll down, active link squiggle ------- */
@@ -454,6 +491,7 @@
 
   /* ------- contact form ------- */
   const form = $("#contact-form");
+  if (!form) return;
   const msg = $(".form__msg", form);
   const say = (text, err) => { msg.textContent = text; msg.classList.toggle("is-err", !!err); msg.classList.add("is-on"); };
   $$("input, textarea", form).forEach(f => f.addEventListener("input", () => f.closest(".field").classList.remove("is-error")));
@@ -471,11 +509,15 @@
     const btn = $("button", form);
     btn.disabled = true;
     try {
-      if (FORM_ENDPOINT) {
-        const res = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) });
-        if (!res.ok) throw new Error(res.status);
-      } else {
-        const bodyTxt = `שם: ${data.name}\nטלפון: ${data.phone}\nמייל: ${data.email}\n\n${data.message}`;
+      const bodyTxt = `שם: ${data.name}\nטלפון: ${data.phone}\nמייל: ${data.email}\n\n${data.message}`;
+      let sent = false;
+      try {
+        const res = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ ...data, _subject: "פנייה חדשה מהאתר – " + data.name, _template: "table", _captcha: "false" }) });
+        const j = await res.json().catch(() => ({}));
+        sent = res.ok && j.success !== "false";
+      } catch (_) {}
+      if (!sent) {
         location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("פנייה חדשה מהאתר – " + data.name)}&body=${encodeURIComponent(bodyTxt)}`;
       }
       form.classList.add("is-sent");
