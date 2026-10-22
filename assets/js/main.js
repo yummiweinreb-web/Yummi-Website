@@ -142,75 +142,7 @@
     holder._snake = s; holder.classList.add("snake-on");
     return s;
   }
-  /* ------- hero: empty laptop first, then the snakes crawl in from the left (WebGL layers) ------- */
-  function makeHero() {
-    const img = $(".hero__art img");
-    if (!img || reduce) return null;
-    const holder = img.closest("picture").parentElement;
-    const cv = document.createElement("canvas");
-    cv.className = "snake"; cv.width = 1720; cv.height = 1400; cv.setAttribute("aria-hidden", "true");
-    const gl = cv.getContext("webgl", { alpha: false, antialias: false });
-    if (!gl) return null;
-    const sh = (t, src) => { const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return o; };
-    const pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
-    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
-uniform sampler2D pon,pu,re,tm;uniform float p,f;
-void main(){
-  vec3 T=texture2D(tm,v).rgb;
-  float P=clamp((p-.03)/.97,0.,1.);
-  vec4 a=texture2D(pu,v);
-  float w1=clamp((P-T.r)/.02,0.,1.)*a.a;
-  float q=clamp((P-.3)/.7,0.,1.);
-  vec4 b=texture2D(re,v);
-  float w2=clamp((q*1.04-T.g)/.02,0.,1.)*b.a;
-  vec3 c=texture2D(pon,v).rgb;
-  c=mix(c,a.rgb,w1);
-  c=mix(c,b.rgb,w2);
-  gl_FragColor=vec4(c,1.);}`));
-    gl.linkProgram(pr); gl.useProgram(pr);
-    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-    const P = gl.getUniformLocation(pr, "p"), F = gl.getUniformLocation(pr, "f");
-    const base = "assets/img/hero/";
-    const h = { p: 0, f: 0, started: false };
-    const draw = () => { gl.uniform1f(P, h.p); gl.uniform1f(F, h.f); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-    h.ready = Promise.all([base + "plate-on.webp", base + "pur.webp", base + "red.webp", base + "times.png"].map(loadImg)).then(ims => {
-      ["pon", "pu", "re", "tm"].forEach((n, i) => {
-        gl.activeTexture(gl.TEXTURE0 + i);
-        const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
-        const fm = i === 1 || i === 2 ? gl.RGBA : gl.RGB;
-        gl.texImage2D(gl.TEXTURE_2D, 0, fm, fm, gl.UNSIGNED_BYTE, ims[i]);
-        [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
-        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
-        gl.uniform1i(gl.getUniformLocation(pr, n), i);
-      });
-      gl.viewport(0, 0, cv.width, cv.height);
-      const hp = new URLSearchParams(location.search).get("hp"); if (hp !== null) { h.started = true; h.p = +hp; } draw();
-      img.closest("picture").after(cv); img.closest("picture").style.display = "none";
-    }).catch(() => { h.failed = true; });
-    h.play = (delay = 0) => {
-      if (h.started) return; h.started = true;
-      h.ready.then(() => {
-        if (h.failed) return;
-        const D = 6200, t0 = performance.now() + delay * 1000;
-        const tick = now => {
-          const k = Math.min(1, Math.max(0, (now - t0) / D));
-          h.p = ease(k) * 1.02;
-          draw();
-          if (k < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      });
-    };
-    snakeReady.push(h.ready);
-    return h;
-  }
-  const heroSnake = makeHero() || makeSnake($(".hero__art img"), { dur: 3.8, fit: "xMidYMid slice" });
-  makeSnake($(".contact__tube img"), { dur: 3.6 });
-  makeSnake($(".talk__script img"), { dur: 3.4 });
+  const heroSnake = null; /* hero is a static picture again; snakes no longer animate */
 
   /* ------- script titles: scribbled in, stroke by stroke ------- */
   function scribbleLayout() {
