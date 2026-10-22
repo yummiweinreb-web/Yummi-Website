@@ -312,7 +312,7 @@
 
   /* ------- hero: centre the content block (script word → buttons) vertically in the first screen (desktop) ------- */
   (() => {
-    const hero = $(".hero"), sc = $(".hero__script", hero), ct = $(".hero__ctas", hero);
+    const hero = $(".hero"), sc = hero && $(".hero__script", hero), ct = hero && $(".hero__ctas", hero);
     if (!hero || !sc || !ct) return;
     const fit = () => {
       if (innerWidth < 1024) { hero.style.removeProperty("--hero-shift"); return; }
