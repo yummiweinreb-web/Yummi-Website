@@ -158,12 +158,17 @@
 uniform sampler2D plate,snk,orig,tm,al;uniform float p,f;
 void main(){
   vec3 T=texture2D(tm,v).rgb, A=texture2D(al,v).rgb;
-  float w1=clamp((p-T.r)/.045,0.,1.)*A.r;
-  float q=clamp((p-.22)/.78,0.,1.);
-  float w2=clamp((q*1.04-T.g)/.03,0.,1.)*A.g;
+  float d1=p-T.r;
+  float w1=clamp(d1/.03,0.,1.)*A.r;
+  float q=clamp((p-.36)/.64,0.,1.);
+  float d2=q*1.04-T.g;
+  float w2=clamp(d2/.03,0.,1.)*A.g;
   vec3 o=texture2D(orig,v).rgb;
   vec3 c=mix(texture2D(plate,v).rgb,texture2D(snk,v).rgb,w1);
   c=mix(c,o,w2);
+  float g1=step(0.,d1)*exp(-d1/.05)*A.r*(1.-step(.98,p));
+  float g2=step(0.,d2)*exp(-d2/.05)*A.g;
+  c+=g1*vec3(.55,.30,.95)*(1.-w2)+g2*vec3(.95,.45,.35);
   gl_FragColor=vec4(mix(c,o,f),1.);}`));
     gl.linkProgram(pr); gl.useProgram(pr);
     const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
@@ -191,7 +196,7 @@ void main(){
       if (h.started) return; h.started = true;
       h.ready.then(() => {
         if (h.failed) return;
-        const D = 5200, t0 = performance.now() + delay * 1000;
+        const D = 6200, t0 = performance.now() + delay * 1000;
         const tick = now => {
           const k = Math.min(1, Math.max(0, (now - t0) / D));
           h.p = ease(k) * 1.02;
