@@ -155,18 +155,17 @@
     const pr = gl.createProgram();
     gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
     gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
-uniform sampler2D plate,pon,snk,orig,tm,al;uniform float p,f;
+uniform sampler2D pon,snk,orig,tm,al;uniform float p,f;
 void main(){
   vec3 T=texture2D(tm,v).rgb, A=texture2D(al,v).rgb;
-  float on=smoothstep(0.,1.,clamp(p/.13,0.,1.));
-  float P=clamp((p-.15)/.85,0.,1.);
+  float P=clamp((p-.03)/.97,0.,1.);
   float d1=P-T.r;
   float w1=clamp(d1/.03,0.,1.)*A.r;
   float q=clamp((P-.36)/.64,0.,1.);
   float d2=q*1.04-T.g;
   float w2=clamp(d2/.03,0.,1.)*A.g;
   vec3 o=texture2D(orig,v).rgb;
-  vec3 c=mix(texture2D(plate,v).rgb,texture2D(pon,v).rgb,on);
+  vec3 c=texture2D(pon,v).rgb;
   c=mix(c,texture2D(snk,v).rgb,w1);
   c=mix(c,o,w2);
   gl_FragColor=vec4(c,1.);}`));
@@ -179,8 +178,8 @@ void main(){
     const base = "assets/img/hero/";
     const h = { p: 0, f: 0, started: false };
     const draw = () => { gl.uniform1f(P, h.p); gl.uniform1f(F, h.f); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-    h.ready = Promise.all([base + "plate.webp", base + "plate-on.webp", base + "snakes.webp", img.currentSrc || img.src, base + "times.png", base + "alpha.png"].map(loadImg)).then(ims => {
-      ["plate", "pon", "snk", "orig", "tm", "al"].forEach((n, i) => {
+    h.ready = Promise.all([base + "plate-on.webp", base + "snakes.webp", img.currentSrc || img.src, base + "times.png", base + "alpha.png"].map(loadImg)).then(ims => {
+      ["pon", "snk", "orig", "tm", "al"].forEach((n, i) => {
         gl.activeTexture(gl.TEXTURE0 + i);
         const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, ims[i]);
