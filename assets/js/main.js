@@ -308,6 +308,37 @@
     if (!el.style.getPropertyValue("--d")) el.style.setProperty("--d", `${Math.min(i, 6) * .08}s`);
   }));
 
+
+  /* ------- projects deck: tilted pile, the top screen flips to the back every few seconds ------- */
+  (() => {
+    const deck = $(".deck"); if (!deck) return;
+    const cards = $$(".gcard", deck), n = cards.length; if (n < 2) return;
+    let order = cards.map((_, i) => i);          // order[0] = top card
+    const place = () => order.forEach((ci, slot) => { const c = cards[ci]; c.style.setProperty("--i", slot); c.dataset.far = slot > 4 ? "1" : ""; });
+    place();
+    if (reduce) return;
+    let timer = null, busy = false, visible = false;
+    const flip = () => {
+      if (busy || !visible || document.hidden) return; busy = true;
+      const top = cards[order[0]];
+      top.classList.add("is-out");
+      const rest = order.slice(1); rest.forEach((ci, k) => { cards[ci].style.setProperty("--i", k); cards[ci].dataset.far = k > 4 ? "1" : ""; });
+      setTimeout(() => {
+        top.style.zIndex = "0";                    // slip behind the pile
+        top.classList.remove("is-out"); top.classList.add("is-back");
+        top.style.setProperty("--i", n - 1); top.dataset.far = "1";
+        void top.offsetWidth;
+        top.classList.remove("is-back");
+        order = rest.concat(order[0]);
+        setTimeout(() => { top.style.zIndex = ""; place(); busy = false; }, 80);
+      }, 950);
+    };
+    const start = () => { if (!timer) timer = setInterval(flip, 3200); };
+    const stop = () => { clearInterval(timer); timer = null; };
+    new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; visible ? start() : stop(); }), { threshold: .25 }).observe(deck);
+    deck.addEventListener("pointerenter", stop); deck.addEventListener("pointerleave", () => visible && start());
+  })();
+
   /* ------- nav: scrolled state, hide on scroll down, active link squiggle ------- */
   const nav = $("#nav");
   const links = $$(".nav__links a");

@@ -906,3 +906,24 @@ picture { display: contents; }
 @media (min-width: 1024px) { .step__line i { top: calc(5.5 * var(--a)); } .step__dot { margin-top: 0; } }
 @media (min-width: 1024px) { .process__btn { top: calc(420 * var(--a)); } }
 @media (max-width: 1023.98px) { .hero { margin-top: 0; } }
+
+/* ---------- projects deck: a tilted pile of screens lying on the desk, auto-flipping ---------- */
+.gallery { display: none; }
+.deck { position: relative; width: 100%; height: 600px; margin: 0 auto; perspective: 1900px; perspective-origin: 50% 20%; overflow: visible; }
+.deck__stage { position: absolute; left: 50%; top: 50%; width: 700px; aspect-ratio: 16 / 9; margin: -197px 0 0 -350px; transform-style: preserve-3d; transform: rotateX(54deg) rotateZ(-9deg); }
+.deck .gcard { --i: 0; position: absolute; inset: 0; display: block; grid-column: auto; z-index: calc(20 - var(--i)); transform-style: preserve-3d;
+  transform: translate3d(calc(var(--i) * 22px), calc(var(--i) * -26px), calc(var(--i) * -34px)) rotateZ(calc(var(--i) * 1.4deg));
+  opacity: calc(1 - var(--i) * .16); transition: transform 1s cubic-bezier(.6, .02, .2, 1), opacity .9s ease; will-change: transform; }
+.deck .gcard[data-far="1"] { opacity: 0; }
+.deck .gcard.is-out { transform: translate3d(-125%, 14%, 90px) rotateZ(-16deg); opacity: 0; transition: transform .95s cubic-bezier(.5, 0, .2, 1), opacity .7s ease .25s; }
+.deck .gcard.is-back { transition: none; }
+.deck .gcard__shot { border-radius: 12px; box-shadow: 0 0 0 1px rgba(170, 130, 255, .5), 0 30px 60px -10px rgba(0, 0, 0, .8), 0 0 50px rgba(90, 40, 255, .45); }
+.deck .gcard:hover .gcard__shot { transform: none; }
+.deck__shadow { position: absolute; inset: 0; pointer-events: none; }
+.gallery__more { margin-top: 0; }
+@media (max-width: 1023.98px) {
+  .deck { height: calc(380 * var(--n)); perspective: 1200px; }
+  .deck__stage { width: min(78vw, 520px); margin: calc(min(78vw, 520px) * -.28) 0 0 calc(min(78vw, 520px) / -2); transform: rotateX(52deg) rotateZ(-8deg); }
+  .deck .gcard { transform: translate3d(calc(var(--i) * 12px), calc(var(--i) * -15px), calc(var(--i) * -24px)) rotateZ(calc(var(--i) * 1.4deg)); }
+}
+@media (min-width: 1024px) { .deck { height: 640px; } .deck__stage { width: 840px; margin: -236px 0 0 -420px; } .deck .gcard { transform: translate3d(calc(var(--i) * 26px), calc(var(--i) * -30px), calc(var(--i) * -40px)) rotateZ(calc(var(--i) * 1.4deg)); } .deck .gcard.is-out { transform: translate3d(-125%, 14%, 90px) rotateZ(-16deg); } }
