@@ -142,7 +142,69 @@
     holder._snake = s; holder.classList.add("snake-on");
     return s;
   }
-  const heroSnake = makeSnake($(".hero__art img"), { dur: 3.8, fit: "xMidYMid slice" });
+  /* ------- hero: empty laptop first, then the snakes crawl in from the left (WebGL layers) ------- */
+  function makeHero() {
+    const img = $(".hero__art img");
+    if (!img || reduce || !matchMedia("(min-width:1024px)").matches) return null;
+    const holder = img.closest("picture").parentElement;
+    const cv = document.createElement("canvas");
+    cv.className = "snake"; cv.width = 1720; cv.height = 1400; cv.setAttribute("aria-hidden", "true");
+    const gl = cv.getContext("webgl", { alpha: false, antialias: false });
+    if (!gl) return null;
+    const sh = (t, src) => { const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return o; };
+    const pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
+    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
+uniform sampler2D plate,snk,orig,tm,al;uniform float p,f;
+void main(){
+  vec3 T=texture2D(tm,v).rgb, A=texture2D(al,v).rgb;
+  float w1=clamp((p-T.r)/.07,0.,1.)*A.r;
+  float q=clamp((p-.30)/.70,0.,1.);
+  float w2=clamp((q*1.07-T.g)/.07,0.,1.)*A.g;
+  vec3 o=texture2D(orig,v).rgb;
+  vec3 c=mix(texture2D(plate,v).rgb,texture2D(snk,v).rgb,w1);
+  c=mix(c,o,w2);
+  gl_FragColor=vec4(mix(c,o,f),1.);}`));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    const P = gl.getUniformLocation(pr, "p"), F = gl.getUniformLocation(pr, "f");
+    const base = "assets/img/hero/";
+    const h = { p: 0, f: 0, started: false };
+    const draw = () => { gl.uniform1f(P, h.p); gl.uniform1f(F, h.f); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+    h.ready = Promise.all([base + "plate.webp", base + "snakes.webp", img.currentSrc || img.src, base + "times.png", base + "alpha.png"].map(loadImg)).then(ims => {
+      ["plate", "snk", "orig", "tm", "al"].forEach((n, i) => {
+        gl.activeTexture(gl.TEXTURE0 + i);
+        const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, ims[i]);
+        [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+        gl.uniform1i(gl.getUniformLocation(pr, n), i);
+      });
+      gl.viewport(0, 0, cv.width, cv.height); draw();
+      img.closest("picture").after(cv); img.closest("picture").style.display = "none";
+    }).catch(() => { h.failed = true; });
+    h.play = (delay = 0) => {
+      if (h.started) return; h.started = true;
+      h.ready.then(() => {
+        if (h.failed) return;
+        const D = 5200, t0 = performance.now() + delay * 1000;
+        const tick = now => {
+          const k = Math.min(1, Math.max(0, (now - t0) / D));
+          h.p = ease(k) * 1.02;
+          h.f = Math.min(1, Math.max(0, (now - t0 - D) / 700));
+          draw();
+          if (h.f < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    };
+    snakeReady.push(h.ready);
+    return h;
+  }
+  const heroSnake = makeHero() || makeSnake($(".hero__art img"), { dur: 3.8, fit: "xMidYMid slice" });
   makeSnake($(".contact__tube img"), { dur: 3.6 });
   makeSnake($(".talk__script img"), { dur: 3.4 });
 
