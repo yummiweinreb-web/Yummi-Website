@@ -104,11 +104,15 @@ body:not(.is-loading) .loader { opacity: 0; visibility: hidden; }
 .script svg { width: 100%; height: 100%; overflow: visible; }
 .script text { font-family: "Allison", cursive; fill: currentColor; }
 .script path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-.script .script__text { clip-path: inset(0 100% 0 0); transition: clip-path 1.5s var(--ease) .35s; }
-.script .script__flourish { stroke-dasharray: var(--len, 600); stroke-dashoffset: var(--len, 600); transition: stroke-dashoffset 1.3s var(--ease); }
-.script .script__flourish--r { transition-delay: .9s; }
-.script.is-in .script__text { clip-path: inset(0 0 0 0); }
-.script.is-in .script__flourish { stroke-dashoffset: 0; }
+@property --wp { syntax: "<percentage>"; inherits: false; initial-value: 110%; }
+.script svg { --wp: 110%; }
+.js .script svg {
+  --wp: -14%;
+  -webkit-mask-image: linear-gradient(98deg, #000 var(--wp), transparent calc(var(--wp) + 12%));
+          mask-image: linear-gradient(98deg, #000 var(--wp), transparent calc(var(--wp) + 12%));
+  transition: --wp 2.4s cubic-bezier(.55, .1, .35, 1) .25s;
+}
+.js .script.is-in svg { --wp: 112%; }
 .script { filter: drop-shadow(0 0 6px rgba(98, 6, 232, .55)); }
 
 /* ---------- buttons ---------- */

@@ -212,6 +212,7 @@ void main(){
 
   /* ------- script titles: scribbled in, stroke by stroke ------- */
   function scribbleLayout() {
+    return; // pen animation replaced by a soft left-to-right wipe (CSS)
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     scripts.forEach(el => {
       const w = el.clientWidth, h = el.clientHeight;
