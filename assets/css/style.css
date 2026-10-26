@@ -1107,3 +1107,50 @@ picture { display: contents; }
   .deck { margin-top: 12px; }
 }
 @media (max-width: 1023.98px) { .work--home .work__head { width: 100%; } .work--home .work__script { left: calc(50% - 80px); } }
+
+/* =====================================================================
+   Side menu (desktop): vertical step nav, right edge
+   ===================================================================== */
+.sidenav { display: none; }
+@media (min-width: 1024px) {
+  .nav__pill { display: none !important; }
+  .sidenav { display: block; position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 95; }
+  .sidenav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 30px; position: relative; }
+  .sidenav li { position: relative; display: flex; justify-content: flex-end; }
+  .sidenav__line { position: absolute; right: 8px; top: 0; bottom: 0; width: 2px; border-radius: 2px; background: rgba(150, 120, 255, .28); }
+  .sidenav__line i { position: absolute; left: 0; top: 0; width: 100%; height: 0; border-radius: 2px; background: linear-gradient(180deg, #5a28ff, #ff4fae); box-shadow: 0 0 12px rgba(140, 80, 255, .9); transition: height .7s var(--ease); }
+  .sidenav a { --my: 0px; position: relative; display: flex; flex-direction: row-reverse; align-items: center; gap: 12px; padding: 4px 0; color: rgba(255,255,255,.75); transition: color .3s, transform .35s var(--ease); transform: translateY(var(--my)); }
+  .sidenav__dot { position: relative; flex: none; width: 18px; height: 18px; border-radius: 50%; background: #0d0426; box-shadow: 0 0 0 2px rgba(150, 120, 255, .7); transition: transform .4s var(--ease), background .3s, box-shadow .3s; }
+  .sidenav__dot::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: rgba(150, 120, 255, .9); transition: background .3s, transform .4s var(--ease); }
+  .sidenav__num { position: absolute; right: 26px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 900; letter-spacing: .06em; direction: ltr; color: rgba(255,255,255,.5); transition: opacity .3s, transform .4s var(--ease); }
+  .sidenav__label { position: absolute; right: 30px; top: 50%; display: flex; align-items: center; gap: 10px; white-space: nowrap; font-size: 15px; font-weight: 400; padding: 8px 16px; border-radius: 99px;
+    background: rgba(18, 6, 48, .78); backdrop-filter: blur(10px); box-shadow: 0 0 0 1px rgba(150, 120, 255, .45), 0 10px 30px -8px rgba(70, 30, 220, .7);
+    opacity: 0; transform: translate(14px, -50%) scale(.9); filter: blur(4px); pointer-events: none; transition: opacity .35s var(--ease), transform .45s var(--ease), filter .35s, background .3s; transition-delay: 0s; }
+  .sidenav__label svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .35s var(--ease); }
+  /* whole menu unfolds when the pointer is on it, each step staggered */
+  .sidenav:hover .sidenav__label { opacity: 1; transform: translate(0, -50%) scale(1); filter: none; transition-delay: calc(var(--i, 0) * .05s); }
+  .sidenav:hover .sidenav__num { opacity: 0; transform: translate(10px, -50%); }
+  .sidenav li { transition: none; }
+  /* hovered step */
+  .sidenav a:hover { color: #fff; }
+  .sidenav a:hover .sidenav__dot { transform: scale(1.35); background: var(--lime); box-shadow: 0 0 0 2px var(--lime), 0 0 20px rgba(177, 251, 1, .8); }
+  .sidenav a:hover .sidenav__dot::after { background: #0d0426; transform: scale(.6); }
+  .sidenav a:hover .sidenav__label { background: rgba(60, 24, 160, .9); box-shadow: 0 0 0 1px rgba(177, 251, 1, .7), 0 0 26px rgba(130, 70, 255, .8); transform: translate(-6px, -50%) scale(1.04); color: #fff; }
+  .sidenav a:hover .sidenav__label svg { transform: translateX(-4px); }
+  .sidenav a::before { content: ""; position: absolute; right: -4px; top: 50%; width: 26px; height: 26px; margin-top: -13px; border-radius: 50%; border: 2px solid rgba(177, 251, 1, .8); opacity: 0; transform: scale(.5); pointer-events: none; }
+  .sidenav a:hover::before { animation: sideRipple .9s ease-out infinite; }
+  @keyframes sideRipple { 0% { opacity: .9; transform: scale(.5); } 100% { opacity: 0; transform: scale(1.9); } }
+  /* done / active */
+  .sidenav a.is-done .sidenav__dot::after { background: #ff4fae; }
+  .sidenav a.is-active { color: #fff; }
+  .sidenav a.is-active .sidenav__dot { background: #5a28ff; box-shadow: 0 0 0 2px #fff, 0 0 22px rgba(120, 70, 255, 1); transform: scale(1.2); animation: sidePulse 2s ease-in-out infinite; }
+  .sidenav a.is-active .sidenav__dot::after { background: #fff; }
+  .sidenav a.is-active .sidenav__num { color: var(--lime); }
+  @keyframes sidePulse { 0%, 100% { box-shadow: 0 0 0 2px #fff, 0 0 12px rgba(120, 70, 255, .9); } 50% { box-shadow: 0 0 0 2px #fff, 0 0 28px rgba(160, 100, 255, 1); } }
+  /* last step = button */
+  .sidenav a.is-cta .sidenav__label { background: linear-gradient(90deg, #4a1cf2, #6234ff); box-shadow: 0 0 0 1px rgba(190, 170, 255, .5) inset, 0 0 18px rgba(98, 30, 255, .6); font-weight: 400; }
+  .sidenav a.is-cta:hover .sidenav__label { background: linear-gradient(90deg, #ff4fae, #7a38ff); }
+  .sidenav a.is-cta .sidenav__dot::after { background: #ff4fae; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) { .sidenav a.is-active .sidenav__dot, .sidenav a:hover::before { animation: none; } }
+html { overflow-x: clip; } .talk__script img { max-width: none; }

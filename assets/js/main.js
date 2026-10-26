@@ -335,6 +335,50 @@
     v.addEventListener("ended", () => box.classList.remove("is-playing"));
   })();
 
+
+  /* ------- side menu (desktop): vertical step nav on the right, follows the page ------- */
+  (() => {
+    const isHome = !!$("#top") && !!$("#about");
+    const base = isHome ? "" : "index.html";
+    const items = [
+      { n: "01", t: "בית", h: isHome ? "#top" : "index.html", ids: ["top"] },
+      { n: "02", t: "מה זה יאמי? שרביט הקסם שלי", h: base + "#about", ids: ["about", "process"] },
+      { n: "03", t: "עבודות עם אופי", h: "work.html", ids: ["work"], page: "work" },
+      { n: "04", t: "בואו נדבר", h: (isHome ? "" : "index.html") + "#contact", ids: ["contact", "talk"], cta: true }
+    ];
+    const nav = document.createElement("nav");
+    nav.className = "sidenav"; nav.setAttribute("aria-label", "ניווט ראשי");
+    nav.innerHTML = '<span class="sidenav__line" aria-hidden="true"><i></i></span><ul>' + items.map((it, i) =>
+      `<li style="--i:${i}"><a href="${it.h}" class="${it.cta ? "is-cta" : ""}" data-i="${i}"><span class="sidenav__dot" aria-hidden="true"></span><span class="sidenav__num">${it.n}</span><span class="sidenav__label">${it.t}${it.cta ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>' : ""}</span></a></li>`).join("") + "</ul>";
+    document.body.appendChild(nav);
+    const links = $$("a", nav), fill = $(".sidenav__line i", nav);
+    const onWorkPage = /work\.html/.test(location.pathname);
+    const set = idx => {
+      links.forEach((a, k) => { a.classList.toggle("is-active", k === idx); a.classList.toggle("is-done", idx >= 0 && k < idx); });
+      const ul = $("ul", nav), last = links.length - 1;
+      const pos = idx < 0 ? 0 : links[idx].parentElement.offsetTop + links[idx].parentElement.offsetHeight / 2;
+      fill.style.height = pos + "px";
+    };
+    let cur = -2;
+    const spy = () => {
+      let idx = -1;
+      if (!isHome) idx = onWorkPage ? 2 : -1;
+      else {
+        const line = innerHeight * .45;
+        items.forEach((it, k) => it.ids.forEach(id => { const e = document.getElementById(id); if (e && e.getBoundingClientRect().top <= line) idx = k; }));
+        if (idx < 0) idx = 0;
+      }
+      if (idx !== cur) { cur = idx; set(idx); }
+    };
+    addEventListener("scroll", spy, { passive: true }); addEventListener("resize", () => { cur = -2; spy(); });
+    addEventListener("load", () => { cur = -2; spy(); }); spy();
+    /* hover: a little pull toward the cursor on the hovered step */
+    links.forEach(a => {
+      a.addEventListener("pointermove", e => { const r = a.getBoundingClientRect(); a.style.setProperty("--my", ((e.clientY - r.top - r.height / 2) * .18).toFixed(1) + "px"); });
+      a.addEventListener("pointerleave", () => a.style.setProperty("--my", "0px"));
+    });
+  })();
+
   /* ------- projects deck: tilted pile, the top screen flips to the back every few seconds ------- */
   (() => {
     /* projects deck: scrubbed by scroll — the section pins, wheel/touch scroll flips the screens (reverses on scroll up) */
