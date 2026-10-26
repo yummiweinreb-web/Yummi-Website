@@ -340,6 +340,7 @@
   (() => {
     const isHome = !!$("#top") && !!$("#about");
     const base = isHome ? "" : "index.html";
+    const ICONS = {"01": `<path d="M3 11.5 12 4l9 7.5M5.5 10v9.5h5v-5.5h3v5.5h5V10"/>`, "02": `<path d="m5 19 9.5-9.5M13 4.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1zM18.5 13l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/>`, "03": `<rect x="3.5" y="4.5" width="17" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/>`, "04": `<path d="M20.5 12a8 7 0 0 1-11.7 5.3L4 18.5l1.4-4A8 7 0 1 1 20.5 12Z"/>`};
     const items = [
       { n: "01", t: "בית", h: isHome ? "#top" : "index.html", ids: ["top"] },
       { n: "02", t: "מה זה יאמי? שרביט הקסם שלי", h: base + "#about", ids: ["about", "process"] },
@@ -349,7 +350,7 @@
     const nav = document.createElement("nav");
     nav.className = "sidenav"; nav.setAttribute("aria-label", "ניווט ראשי");
     nav.innerHTML = '<span class="sidenav__line" aria-hidden="true"><i></i></span><ul>' + items.map((it, i) =>
-      `<li style="--i:${i}"><a href="${it.h}" class="${it.cta ? "is-cta" : ""}" data-i="${i}"><span class="sidenav__dot" aria-hidden="true"></span><span class="sidenav__num">${it.n}</span><span class="sidenav__label">${it.t}${it.cta ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>' : ""}</span></a></li>`).join("") + "</ul>";
+      `<li style="--i:${i}"><a href="${it.h}" class="${it.cta ? "is-cta" : ""}" data-i="${i}"><span class="sidenav__dot" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONS[it.n]}</svg></span><span class="sidenav__label">${it.t}${it.cta ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>' : ""}</span></a></li>`).join("") + "</ul>";
     document.body.appendChild(nav);
     const links = $$("a", nav), fill = $(".sidenav__line i", nav);
     const onWorkPage = /work\.html/.test(location.pathname);
@@ -372,6 +373,12 @@
     };
     addEventListener("scroll", spy, { passive: true }); addEventListener("resize", () => { cur = -2; spy(); });
     addEventListener("load", () => { cur = -2; spy(); }); spy();
+    /* stays open while moving between steps (small grace delay) */
+    let closeT = 0;
+    nav.addEventListener("pointerenter", () => { clearTimeout(closeT); nav.classList.add("is-open"); });
+    nav.addEventListener("pointerleave", () => { closeT = setTimeout(() => nav.classList.remove("is-open"), 450); });
+    nav.addEventListener("focusin", () => nav.classList.add("is-open"));
+    nav.addEventListener("focusout", () => nav.classList.remove("is-open"));
     /* hover: a little pull toward the cursor on the hovered step */
     links.forEach(a => {
       a.addEventListener("pointermove", e => { const r = a.getBoundingClientRect(); a.style.setProperty("--my", ((e.clientY - r.top - r.height / 2) * .18).toFixed(1) + "px"); });
@@ -381,43 +388,53 @@
 
   /* ------- projects deck: tilted pile, the top screen flips to the back every few seconds ------- */
   (() => {
-    /* projects deck: scrubbed by scroll — the section pins, wheel/touch scroll flips the screens (reverses on scroll up) */
+    /* projects deck: the page STOPS at this section and the wheel / touch only drives the screens
+       (down = next screen, up = back). After the last screen (or before the first) the page scrolls on. */
     const deck = $(".deck"); if (!deck) return;
-    const sec = deck.closest(".work--home"), pin = $(".work__pin", sec), anchor = $(".work__anchor", sec), spacer = $(".work__spacer", sec);
+    const sec = deck.closest(".work--home"), pin = $(".work__pin", sec);
     const cards = $$(".gcard", deck), n = cards.length, steps = n - 1;
-    let range = 1, pinTop = 0, cur = 0, tgt = 0, raf = 0;
+    const PX = 230;                       // wheel pixels per screen
+    let pinTop = 0, cur = 0, t = 0, raf = 0, locked = false, lastDy = null, ty = 0;
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-    const measure = () => {
-      const vh = innerHeight, ph = pin.offsetHeight;
-      pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph);
-      pin.style.top = pinTop + "px";
-      range = Math.round(steps * Math.max(260, vh * .42));
-      spacer.style.height = range + "px";
-    };
-    const target = () => clamp((pinTop - anchor.getBoundingClientRect().top) / range) * steps;
-    const paint = t => cards.forEach((c, k) => {
-      const r = k - t;
-      const f = r < 0 ? clamp(-r) : 0, i = Math.max(0, r);
+    const measure = () => { const vh = innerHeight, ph = pin.offsetHeight; pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph); };
+    const paint = v => cards.forEach((c, k) => {
+      const r = k - v, f = r < 0 ? clamp(-r) : 0, i = Math.max(0, r);
       const o = r <= -1 ? 0 : (1 - clamp(f * 1.35)) * clamp((5 - i) / 1.6) * (1 - i * .1);
-      c.style.setProperty("--i", i.toFixed(3));
-      c.style.setProperty("--f", f.toFixed(3));
-      c.style.opacity = Math.max(0, o).toFixed(3);
-      c.style.zIndex = 30 - k;
-      c.style.visibility = o <= .002 ? "hidden" : "";
+      c.style.setProperty("--i", i.toFixed(3)); c.style.setProperty("--f", f.toFixed(3));
+      c.style.opacity = Math.max(0, o).toFixed(3); c.style.zIndex = 30 - k; c.style.visibility = o <= .002 ? "hidden" : "";
     });
-    const loop = () => {
-      tgt = target();
-      cur += (tgt - cur) * .16;
-      if (Math.abs(tgt - cur) < .0008) cur = tgt;
-      paint(cur);
-      raf = (cur !== tgt) ? requestAnimationFrame(loop) : 0;
-    };
+    const loop = () => { cur += (t - cur) * .14; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
     const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
-    measure(); paint(0);
-    addEventListener("scroll", kick, { passive: true });
-    addEventListener("resize", () => { measure(); kick(); });
-    addEventListener("load", () => { measure(); kick(); });
-    if (window.ResizeObserver) new ResizeObserver(() => { measure(); kick(); }).observe(pin);
+    const dy = () => pin.getBoundingClientRect().top - pinTop;
+    const snap = () => { const y = scrollY + dy(); if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
+    const lock = () => { if (locked) return; locked = true; snap(); lenis?.stop(); document.documentElement.classList.add("deck-locked"); };
+    const unlock = () => { if (!locked) return; locked = false; lenis?.start(); document.documentElement.classList.remove("deck-locked"); lastDy = 0; };
+    const drive = d => {                                   // d = pixels (+ = scroll down)
+      t = clamp(t + d / PX, 0, steps); kick();
+      if ((d > 0 && t >= steps) || (d < 0 && t <= 0)) { cur = t; paint(cur); unlock(); }
+    };
+    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); drive(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
+    addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
+    addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; drive((ty - y) * 1.6); ty = y; }, { passive: false });
+    addEventListener("keydown", e => {
+      if (!locked) return;
+      const k = { ArrowDown: 80, PageDown: 400, " ": 400, ArrowUp: -80, PageUp: -400 }[e.key];
+      if (k) { e.preventDefault(); drive(k); }
+    });
+    const watch = () => {
+      if (locked) return;
+      const d = dy();
+      if (lastDy !== null) {
+        if (lastDy > 0 && d <= 0 && t < steps) lock();       // arriving from above
+        else if (lastDy < 0 && d >= 0 && t > 0) lock();      // arriving from below
+      }
+      lastDy = d;
+    };
+    measure(); paint(0); lastDy = null; watch();
+    addEventListener("scroll", watch, { passive: true });
+    addEventListener("resize", () => { measure(); });
+    addEventListener("load", measure);
+    if (window.ResizeObserver) new ResizeObserver(measure).observe(pin);
   })();
 
   /* ------- nav: scrolled state, hide on scroll down, active link squiggle ------- */

@@ -1154,3 +1154,30 @@ picture { display: contents; }
 }
 @media (min-width: 1024px) and (prefers-reduced-motion: reduce) { .sidenav a.is-active .sidenav__dot, .sidenav a:hover::before { animation: none; } }
 html { overflow-x: clip; } .talk__script img { max-width: none; }
+
+/* side menu v2: icons in the dots, menu stays open while moving between steps */
+@media (min-width: 1024px) {
+  .sidenav { right: 18px; padding: 14px 0 14px 300px; }
+  .sidenav ul { gap: 0; }
+  .sidenav li { padding-block: 11px; }
+  .sidenav__line { right: 17px; top: 14px; bottom: 14px; }
+  .sidenav a::after { content: ""; position: absolute; right: -10px; top: -12px; bottom: -12px; width: 330px; }
+  .sidenav__dot { width: 36px; height: 36px; display: grid; place-items: center; box-shadow: 0 0 0 2px rgba(150, 120, 255, .7); }
+  .sidenav__dot::after { display: none; }
+  .sidenav__dot svg { width: 19px; height: 19px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: .85; transition: transform .4s var(--ease), stroke .3s; }
+  .sidenav__num { display: none; }
+  .sidenav__label { right: 48px; }
+  .sidenav.is-open .sidenav__label { opacity: 1; transform: translate(0, -50%) scale(1); filter: none; transition-delay: calc(var(--i, 0) * .05s); pointer-events: auto; }
+  .sidenav:hover .sidenav__label { pointer-events: auto; }
+  .sidenav a::before { right: -6px; width: 48px; height: 48px; margin-top: -24px; }
+  .sidenav a:hover .sidenav__dot { background: var(--lime); box-shadow: 0 0 0 2px var(--lime), 0 0 22px rgba(177, 251, 1, .8); transform: scale(1.18); }
+  .sidenav a:hover .sidenav__dot svg { stroke: #0d0426; opacity: 1; transform: rotate(-8deg) scale(1.1); }
+  .sidenav a.is-active .sidenav__dot { transform: scale(1.1); }
+  .sidenav a.is-active .sidenav__dot svg { opacity: 1; }
+  .sidenav a.is-done .sidenav__dot { box-shadow: 0 0 0 2px #ff4fae; }
+  .sidenav a.is-cta .sidenav__dot svg { stroke: #ff9fd2; }
+}
+/* deck: no scroll-room spacer, the page is held by JS instead */
+.work__pin, .work--home .work__pin { position: relative !important; top: auto !important; }
+.work__spacer { display: none; }
+html.deck-locked { overscroll-behavior: none; }
