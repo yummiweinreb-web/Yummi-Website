@@ -1329,3 +1329,6 @@ html.deck-locked { overscroll-behavior: none; }
 /* about art: keep the torus tail clear of the text column */
 .aflip { transform: scale(.87); transform-origin: 0 50%; }
 @media (max-width: 1023.98px) { .about__btn { left: 50% !important; right: auto !important; translate: -50% 0; } }
+/* panels flip over empty space: the loose bits around them swap quickly while the cards are edge-on */
+.aflip__base { transition: opacity .55s ease .4s; }
+.aflip__card { transition: transform 1.5s cubic-bezier(.55, .05, .25, 1) !important; }

@@ -399,7 +399,7 @@
     const box = $(".aflip"); if (!box) return;
     const cards = $$(".aflip__card", box), baseA = $(".aflip__base--a", box), baseB = $(".aflip__base--b", box);
     const imgs = [1, 2, 3].map(i => `assets/img/about-flip-${i}.webp`);
-    imgs.forEach(u => { const im = new Image(); im.src = u; });
+    imgs.forEach(u => { const im = new Image(); im.src = u; const b = new Image(); b.src = u.replace('about-flip', 'about-base'); });
     /* panel outlines (x, y in the 1100x848 artwork) - the three glass panels sit in the same place in every picture */
     const PANELS = [
       [[95,85],[285,106],[292,112],[207,655],[100,612],[18,550]],
@@ -408,16 +408,17 @@
     ];
     const clip = (i, k) => "polygon(" + PANELS[k].map(([x, y]) => (x / 11).toFixed(2) + "% " + (y / 8.48).toFixed(2) + "%").join(",") + ")";
     const url = i => `url(${imgs[i % imgs.length]})`;
+    const base = i => `url(assets/img/about-base-${(i % imgs.length) + 1}.webp)`;
     const st = cards.map((c, k) => ({ c, k, ang: 0, a: $(".aflip__f--a", c), b: $(".aflip__f--b", c), imgA: 0 }));
     const setFace = (f, i, k) => { f.style.backgroundImage = url(i); f.style.clipPath = f.style.webkitClipPath = clip(i, k); };
     st.forEach(o => { setFace(o.a, 0, o.k); setFace(o.b, 1, o.k); });
-    baseA.style.backgroundImage = url(0); baseB.style.backgroundImage = url(1);
+    baseA.style.backgroundImage = base(0); baseB.style.backgroundImage = base(1);
     let idx = 0, timer = 0, running = false, first = 0, baseShowsB = false;
     const cycle = () => {
       const next = (idx + 1) % imgs.length;
       /* underlay cross-fades to the next picture while the panels turn */
       const [show, hide] = baseShowsB ? [baseA, baseB] : [baseB, baseA];
-      show.style.backgroundImage = url(next); show.style.opacity = 1; hide.style.opacity = 0; baseShowsB = !baseShowsB;
+      show.style.backgroundImage = base(next); show.style.opacity = 1; hide.style.opacity = 0; baseShowsB = !baseShowsB;
       st.forEach((o, k) => setTimeout(() => {
         const frontShown = Math.round(Math.abs(o.ang) / 180) % 2 === 0;
         setFace(frontShown ? o.b : o.a, next, k);
