@@ -1210,3 +1210,16 @@ html.deck-locked { overscroll-behavior: none; }
   @keyframes popIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
   .sidenav a::before { display: none; }
 }
+
+/* about: flipping glass cards */
+.about__art { height: calc(446 * var(--a)); }
+.aflip { position: absolute; inset: 0; display: flex; direction: ltr; perspective: 1500px; }
+.aflip__card { position: relative; flex: 0 0 33.4%; margin-right: -.4%; transform-style: preserve-3d; transition: transform 1.25s cubic-bezier(.62, .02, .18, 1); will-change: transform; }
+.aflip__card:nth-child(2) { z-index: 2; }
+.aflip__f { position: absolute; inset: 0; display: block; background-repeat: no-repeat; background-size: 300% 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.aflip__card:nth-child(1) .aflip__f { background-position: 0% 0; }
+.aflip__card:nth-child(2) .aflip__f { background-position: 50% 0; }
+.aflip__card:nth-child(3) .aflip__f { background-position: 100% 0; }
+.aflip__f--b { transform: rotateY(180deg); }
+@media (max-width: 1023.98px) { .about__art { height: calc(385 * var(--n)); } }
+@media (max-width: 1023.98px) { .about__art { left: calc(149 * var(--n)); width: calc(434 * var(--n)); height: calc(334 * var(--n)); } }

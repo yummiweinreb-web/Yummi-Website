@@ -393,6 +393,32 @@
     });
   })();
 
+
+  /* ------- about: three glass cards that flip around themselves, revealing the next picture ------- */
+  (() => {
+    const box = $(".aflip"); if (!box) return;
+    const cards = $$(".aflip__card", box), imgs = [1, 2, 3].map(i => `assets/img/about-flip-${i}.webp`);
+    imgs.forEach(u => { const im = new Image(); im.src = u; });
+    const st = cards.map((c, k) => ({ c, k, ang: 0, a: $(".aflip__f--a", c), b: $(".aflip__f--b", c) }));
+    const url = i => `url(${imgs[i % imgs.length]})`;
+    st.forEach(o => { o.a.style.backgroundImage = url(0); o.b.style.backgroundImage = url(1); });
+    let idx = 0, timer = 0, running = false;
+    const cycle = () => {
+      const next = (idx + 1) % imgs.length;
+      st.forEach((o, k) => setTimeout(() => {
+        const frontShown = Math.round(Math.abs(o.ang) / 180) % 2 === 0;
+        (frontShown ? o.b : o.a).style.backgroundImage = url(next);      // the face about to appear
+        o.ang += (k % 2 ? -180 : 180);
+        o.c.style.transform = `rotateY(${o.ang}deg)`;
+      }, [0, 320, 160][k]));
+      idx = next;
+    };
+    const start = () => { if (running || reduce) return; running = true; timer = setInterval(cycle, 3800); };
+    const stop = () => { running = false; clearInterval(timer); };
+    if ("IntersectionObserver" in window) new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? start() : stop()), { threshold: .25 }).observe(box);
+    else start();
+  })();
+
   /* ------- projects deck: tilted pile, the top screen flips to the back every few seconds ------- */
   (() => {
     /* projects deck: the page STOPS at this section and the wheel / touch only drives the screens
