@@ -340,30 +340,37 @@
   (() => {
     const isHome = !!$("#top") && !!$("#about");
     const base = isHome ? "" : "index.html";
-    const ICONS = {"01": `<path d="M3 11.5 12 4l9 7.5M5.5 10v9.5h5v-5.5h3v5.5h5V10"/>`, "02": `<path d="m5 19 9.5-9.5M13 4.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1zM18.5 13l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/>`, "03": `<rect x="3.5" y="4.5" width="17" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/>`, "04": `<path d="M20.5 12a8 7 0 0 1-11.7 5.3L4 18.5l1.4-4A8 7 0 1 1 20.5 12Z"/>`};
+    const ICONS = {
+      home: `<path class="ink" pathLength="1" d="M3.4 12.2c2.8-2.6 5.6-5.4 8.7-8.3 3 2.9 5.8 5.7 8.6 8.2"/><path class="ink" pathLength="1" d="M5.6 11.4c-.2 2.7-.1 5.5.2 8 3.1.3 9.2.4 12.6 0 .3-2.5.3-5.3.1-8"/><path class="ink" pathLength="1" d="M16.2 6.2c.1-1 .1-1.9.1-2.6"/><path class="pop" d="M10.4 19.6c-.2-2.1-.1-3.6.2-4.6 1-.5 2.3-.5 3.1 0 .3 1.1.3 2.6.1 4.6"/>`,
+      me: `<path class="ink" pathLength="1" d="M12.1 3.6c4.6-.2 8.3 3.1 8.2 7.8-.1 4.6-3.6 8-8.3 8-4.5 0-8-3.4-7.9-8 .1-4.6 3.4-7.7 8-7.8Z"/><path class="ink" pathLength="1" d="M8.4 14.3c1.9 2.2 5.2 2.3 7.2.1"/><path class="pop" d="M8.7 9.4c.1.8.1 1.3 0 1.9M15.4 9.3c.1.8.1 1.3 0 1.9"/><path class="ink" pathLength="1" d="M19.6 3.2c.2.9.5 1.2 1.4 1.4-.9.2-1.2.5-1.4 1.4-.2-.9-.5-1.2-1.4-1.4.9-.2 1.2-.5 1.4-1.4Z"/>`,
+      wand: `<path class="ink" pathLength="1" d="M4.2 19.8c3.4-3.5 7-7.1 10.4-10.6"/><path class="pop" d="M14.2 9.6l1.9 1.9"/><path class="ink" pathLength="1" d="M16.6 3.4c.5 2 1.1 2.6 3.1 3.1-2 .5-2.6 1.1-3.1 3.1-.5-2-1.1-2.6-3.1-3.1 2-.5 2.6-1.1 3.1-3.1Z"/><path class="ink" pathLength="1" d="M18.9 14.1c.2.8.5 1.1 1.3 1.3-.8.2-1.1.5-1.3 1.3-.2-.8-.5-1.1-1.3-1.3.8-.2 1.1-.5 1.3-1.3ZM7.2 4.6c.2.8.5 1.1 1.3 1.3-.8.2-1.1.5-1.3 1.3-.2-.8-.5-1.1-1.3-1.3.8-.2 1.1-.5 1.3-1.3Z"/>`,
+      work: `<path class="ink" pathLength="1" d="M12.3 3.8c5 .1 8.7 3.3 8.5 7.4-.2 3.1-2.6 3.8-4.5 3.4-1.9-.4-3 .9-2.5 2.5.6 2-.6 3.2-2.3 3.2C6.4 20.3 3 16.8 3.2 12 3.4 7.6 7.2 3.7 12.3 3.8Z"/><path class="pop" d="M7.6 11.3c.1.8 0 1.3-.2 1.8M10.6 7.7c.1.8 0 1.3-.2 1.8M15.1 8c.1.8 0 1.3-.2 1.8"/>`,
+      chat: `<path class="ink" pathLength="1" d="M4.2 11.6C4 7.6 7.4 4.4 12 4.4s8.1 3.1 7.9 7.2c-.2 4-3.6 6.7-8 6.6-1 0-1.9-.1-2.7-.4-1.2 1-2.6 1.8-4.2 2.2.6-1.1 1-2.1 1-3.1-1.2-1.2-1.8-3.2-1.8-5.3Z"/><path class="pop" d="M12 14.3c-2.5-1.6-3.7-2.8-3.4-4.3.3-1.4 2.4-1.7 3.4-.3 1-1.4 3.1-1.1 3.4.3.3 1.5-.9 2.7-3.4 4.3Z"/>`
+    };
     const items = [
-      { n: "01", t: "בית", h: isHome ? "#top" : "index.html", ids: ["top"] },
-      { n: "02", t: "מה זה יאמי? שרביט הקסם שלי", h: base + "#about", ids: ["about", "process"] },
-      { n: "03", t: "עבודות עם אופי", h: "work.html", ids: ["work"], page: "work" },
-      { n: "04", t: "בואו נדבר", h: (isHome ? "" : "index.html") + "#contact", ids: ["contact", "talk"], cta: true }
+      { n: "home", t: "בית", h: isHome ? "#top" : "index.html", ids: ["top"] },
+      { n: "me", t: "מה זה יאמי?", h: base + "#about", ids: ["about"] },
+      { n: "wand", t: "שרביט הקסם שלי", h: base + "#process", ids: ["process"] },
+      { n: "work", t: "עבודות עם אופי", h: "work.html", ids: ["work"] },
+      { n: "chat", t: "בואו נדבר", h: (isHome ? "" : "index.html") + "#contact", ids: ["contact", "talk"], cta: true }
     ];
     const nav = document.createElement("nav");
     nav.className = "sidenav"; nav.setAttribute("aria-label", "ניווט ראשי");
     nav.innerHTML = '<span class="sidenav__line" aria-hidden="true"><i></i></span><ul>' + items.map((it, i) =>
-      `<li style="--i:${i}"><a href="${it.h}" class="${it.cta ? "is-cta" : ""}" data-i="${i}"><span class="sidenav__dot" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONS[it.n]}</svg></span><span class="sidenav__label">${it.t}${it.cta ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>' : ""}</span></a></li>`).join("") + "</ul>";
+      `<li style="--i:${i}"><a href="${it.h}" class="${it.cta ? "is-cta" : ""}" data-i="${i}"><span class="sidenav__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none">${ICONS[it.n]}</svg></span><span class="sidenav__label">${it.t}${it.cta ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>' : ""}</span></a></li>`).join("") + "</ul>";
     document.body.appendChild(nav);
     const links = $$("a", nav), fill = $(".sidenav__line i", nav);
     const onWorkPage = /work\.html/.test(location.pathname);
     const set = idx => {
       links.forEach((a, k) => { a.classList.toggle("is-active", k === idx); a.classList.toggle("is-done", idx >= 0 && k < idx); });
-      const ul = $("ul", nav), last = links.length - 1;
-      const pos = idx < 0 ? 0 : links[idx].parentElement.offsetTop + links[idx].parentElement.offsetHeight / 2;
+      const mid = a => a.parentElement.offsetTop + a.parentElement.offsetHeight / 2;
+      const pos = idx < 0 ? 0 : mid(links[idx]) - mid(links[0]);
       fill.style.height = pos + "px";
     };
     let cur = -2;
     const spy = () => {
       let idx = -1;
-      if (!isHome) idx = onWorkPage ? 2 : -1;
+      if (!isHome) idx = onWorkPage ? 3 : -1;
       else {
         const line = innerHeight * .45;
         items.forEach((it, k) => it.ids.forEach(id => { const e = document.getElementById(id); if (e && e.getBoundingClientRect().top <= line) idx = k; }));

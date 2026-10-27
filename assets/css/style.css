@@ -1184,3 +1184,29 @@ html.deck-locked { overscroll-behavior: none; }
 /* new logo: show its own colours */
 .nav__logo img, .footer__logo img { filter: none !important; }
 .nav__logo img { filter: drop-shadow(0 0 10px rgba(110, 70, 255, .35)) !important; }
+
+/* side menu v3: hand-drawn icons, organic blobs, line stays between first and last dot */
+@media (min-width: 1024px) {
+  .sidenav { padding-block: 14px; }
+  .sidenav li { padding-block: 9px; }
+  .sidenav__line { right: 19px; top: 43px; bottom: 43px; width: 3px; border-radius: 3px; }
+  .sidenav__dot { width: 40px; height: 40px; border-radius: 58% 42% 55% 45% / 48% 56% 44% 52%; background: linear-gradient(145deg, #5a28ff, #a63cff); box-shadow: 0 6px 18px -4px rgba(110, 50, 255, .8); animation: blobMorph 7s ease-in-out infinite; }
+  .sidenav li:nth-child(2n) .sidenav__dot { animation-delay: -2s; border-radius: 45% 55% 42% 58% / 55% 45% 56% 44%; }
+  .sidenav li:nth-child(3n) .sidenav__dot { animation-delay: -4s; }
+  @keyframes blobMorph { 0%, 100% { border-radius: 58% 42% 55% 45% / 48% 56% 44% 52%; } 50% { border-radius: 44% 56% 42% 58% / 56% 44% 58% 42%; } }
+  .sidenav__dot svg { width: 26px; height: 26px; overflow: visible; opacity: 1; }
+  .sidenav__dot svg .ink { stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .sidenav__dot svg .pop { stroke: #ffd0ea; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: rgba(255, 79, 174, .55); }
+  .sidenav a.is-cta .sidenav__dot { background: linear-gradient(145deg, #ff4fae, #7a38ff); }
+  .sidenav a.is-cta .sidenav__dot svg .pop { stroke: #fff; fill: rgba(255,255,255,.85); }
+  .sidenav a.is-done .sidenav__dot { box-shadow: 0 6px 18px -4px rgba(255, 79, 174, .8); background: linear-gradient(145deg, #8a2cff, #ff4fae); }
+  .sidenav a.is-active .sidenav__dot { transform: scale(1.18) rotate(-4deg); box-shadow: 0 0 0 4px rgba(255,255,255,.12), 0 0 28px rgba(150, 90, 255, 1); animation: blobMorph 4s ease-in-out infinite; }
+  /* hover: lime blob, icon re-draws itself */
+  .sidenav a:hover .sidenav__dot { background: linear-gradient(145deg, #d6ff4a, #b1fb01); box-shadow: 0 0 26px rgba(177, 251, 1, .75); transform: scale(1.22) rotate(6deg); }
+  .sidenav a:hover .sidenav__dot svg { transform: none; stroke: none; }
+  .sidenav a:hover .sidenav__dot svg .ink { stroke: #1a0640; animation: inkDraw .75s cubic-bezier(.5, 0, .2, 1) both; }
+  .sidenav a:hover .sidenav__dot svg .pop { stroke: #1a0640; fill: rgba(255, 79, 174, .85); animation: popIn .5s .25s var(--ease) both; transform-origin: center; transform-box: fill-box; }
+  @keyframes inkDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes popIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+  .sidenav a::before { display: none; }
+}
