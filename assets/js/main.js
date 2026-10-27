@@ -419,6 +419,20 @@
     else start();
   })();
 
+
+  /* ------- desktop: swap the art — the tube curves go next to the video, LET'S TALK goes next to the form ------- */
+  (() => {
+    const tube = $(".contact__tube"), script = $(".talk__script"), contact = $("#contact"), talk = $("#talk");
+    if (!tube || !script || !contact || !talk) return;
+    const home = [tube, script].map(el => ({ el, parent: el.parentNode, next: el.nextSibling }));
+    const mq = matchMedia("(min-width: 1024px)");
+    const place = () => {
+      if (mq.matches) { contact.appendChild(script); talk.insertBefore(tube, talk.firstChild); }
+      else home.forEach(h => h.parent.insertBefore(h.el, h.next && h.next.parentNode === h.parent ? h.next : null));
+    };
+    place(); mq.addEventListener("change", place);
+  })();
+
   /* ------- projects deck: tilted pile, the top screen flips to the back every few seconds ------- */
   (() => {
     /* projects deck: the page STOPS at this section and the wheel / touch only drives the screens
@@ -426,7 +440,7 @@
     const deck = $(".deck"); if (!deck) return;
     const sec = deck.closest(".work--home"), pin = $(".work__pin", sec);
     const cards = $$(".gcard", deck), n = cards.length, steps = n - 1;
-    const PX = 230;                       // wheel pixels per screen
+    const PX = 380;                       // wheel pixels per screen
     let pinTop = 0, cur = 0, t = 0, raf = 0, locked = false, lastDy = null, ty = 0;
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const measure = () => { const vh = innerHeight, ph = pin.offsetHeight; pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph); };
@@ -436,7 +450,7 @@
       c.style.setProperty("--i", i.toFixed(3)); c.style.setProperty("--f", f.toFixed(3));
       c.style.opacity = Math.max(0, o).toFixed(3); c.style.zIndex = 30 - k; c.style.visibility = o <= .002 ? "hidden" : "";
     });
-    const loop = () => { cur += (t - cur) * .14; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
+    const loop = () => { cur += (t - cur) * .1; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
     const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
     const dy = () => pin.getBoundingClientRect().top - pinTop;
     const snap = () => { const y = scrollY + dy(); if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
