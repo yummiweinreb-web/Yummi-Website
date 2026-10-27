@@ -394,31 +394,43 @@
   })();
 
 
-  /* ------- about: three glass cards that flip around themselves, revealing the next picture ------- */
+  /* ------- about: the three glass panels flip around themselves, each revealing its part of the next picture ------- */
   (() => {
     const box = $(".aflip"); if (!box) return;
-    const cards = $$(".aflip__card", box), imgs = [1, 2, 3].map(i => `assets/img/about-flip-${i}.webp`);
+    const cards = $$(".aflip__card", box), baseA = $(".aflip__base--a", box), baseB = $(".aflip__base--b", box);
+    const imgs = [1, 2, 3].map(i => `assets/img/about-flip-${i}.webp`);
     imgs.forEach(u => { const im = new Image(); im.src = u; });
-    const st = cards.map((c, k) => ({ c, k, ang: 0, a: $(".aflip__f--a", c), b: $(".aflip__f--b", c) }));
+    /* panel outlines per picture (x, y in the 960×740 artwork): [left panel, middle panel, right panel] */
+    const POLY = [
+      [[[130,86],[247,98],[214,644],[80,644]], [[268,26],[550,60],[564,668],[190,672]], [[570,120],[670,100],[765,655],[755,688],[585,684]]],
+      [[[88,72],[248,94],[212,520],[30,536],[16,500]], [[278,30],[568,68],[582,110],[556,600],[182,600]], [[588,122],[720,102],[750,160],[765,420],[600,430]]],
+      [[[265,48],[420,54],[430,620],[170,618],[190,520]], [[420,40],[560,50],[582,98],[560,500],[430,500]], [[590,100],[700,88],[722,110],[775,590],[740,625],[610,570]]]
+    ];
+    const clip = (i, k) => "polygon(" + POLY[i][k].map(([x, y]) => (x / 9.6).toFixed(2) + "% " + (y / 7.4).toFixed(2) + "%").join(",") + ")";
     const url = i => `url(${imgs[i % imgs.length]})`;
-    st.forEach(o => { o.a.style.backgroundImage = url(0); o.b.style.backgroundImage = url(1); });
-    let idx = 0, timer = 0, running = false;
+    const st = cards.map((c, k) => ({ c, k, ang: 0, a: $(".aflip__f--a", c), b: $(".aflip__f--b", c), imgA: 0 }));
+    const setFace = (f, i, k) => { f.style.backgroundImage = url(i); f.style.clipPath = f.style.webkitClipPath = clip(i, k); };
+    st.forEach(o => { setFace(o.a, 0, o.k); setFace(o.b, 1, o.k); });
+    baseA.style.backgroundImage = url(0); baseB.style.backgroundImage = url(1);
+    let idx = 0, timer = 0, running = false, first = 0, baseShowsB = false;
     const cycle = () => {
       const next = (idx + 1) % imgs.length;
+      /* underlay cross-fades to the next picture while the panels turn */
+      const [show, hide] = baseShowsB ? [baseA, baseB] : [baseB, baseA];
+      show.style.backgroundImage = url(next); show.style.opacity = 1; hide.style.opacity = 0; baseShowsB = !baseShowsB;
       st.forEach((o, k) => setTimeout(() => {
         const frontShown = Math.round(Math.abs(o.ang) / 180) % 2 === 0;
-        (frontShown ? o.b : o.a).style.backgroundImage = url(next);      // the face about to appear
+        setFace(frontShown ? o.b : o.a, next, k);
         o.ang += (k % 2 ? -180 : 180);
         o.c.style.transform = `rotateY(${o.ang}deg)`;
-      }, [0, 320, 160][k]));
+      }, [0, 340, 170][k]));
       idx = next;
     };
-    const start = () => { if (running || reduce) return; running = true; timer = setInterval(cycle, 3800); };
-    const stop = () => { running = false; clearInterval(timer); };
-    if ("IntersectionObserver" in window) new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? start() : stop()), { threshold: .25 }).observe(box);
+    const start = () => { if (running || reduce) return; running = true; first = setTimeout(cycle, 1000); timer = setInterval(cycle, 4200); };
+    const stop = () => { running = false; clearTimeout(first); clearInterval(timer); };
+    if ("IntersectionObserver" in window) new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? start() : stop()), { threshold: .3 }).observe(box);
     else start();
   })();
-
 
   /* ------- desktop: swap the art — the tube curves go next to the video, LET'S TALK goes next to the form ------- */
   (() => {

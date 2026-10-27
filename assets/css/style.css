@@ -1290,3 +1290,16 @@ html.deck-locked { overscroll-behavior: none; }
   .footer { height: calc(420 * var(--q) + 44px); }
   .footer__bottom { top: calc(215 * var(--q) + 44px); }
 }
+
+/* about v2: the glass panels themselves flip (outlines clipped from the artwork) */
+.aflip__card { position: absolute; inset: 0; flex: none; margin: 0; --ox: 16%; transform-origin: var(--ox) 50%; }
+.aflip__card:nth-of-type(1) { --ox: 16%; z-index: 1; }
+.aflip__card:nth-of-type(2) { --ox: 42%; z-index: 3; }
+.aflip__card:nth-of-type(3) { --ox: 70%; z-index: 2; }
+.aflip__f { background-size: 100% 100% !important; background-position: 0 0 !important; transform-origin: var(--ox) 50%; }
+.aflip__f--b { transform: rotateY(180deg); }
+.aflip__base { position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; transition: opacity 1.4s ease; z-index: 0; }
+.aflip__base--a { opacity: 1; }
+.aflip__base--b { opacity: 0; }
+/* menu: a bit more room from the screen edge */
+@media (min-width: 1024px) { .sidenav { right: 38px; } }
