@@ -1303,3 +1303,26 @@ html.deck-locked { overscroll-behavior: none; }
 .aflip__base--b { opacity: 0; }
 /* menu: a bit more room from the screen edge */
 @media (min-width: 1024px) { .sidenav { right: 38px; } }
+
+/* round 8 */
+.pinkw { color: #ff4fae; }
+.nav__logo { width: calc(132 * var(--a)); }
+@media (min-width: 1024px) { .nav__logo { width: calc(132 * var(--a)); } .footer__logo { width: calc(236 * var(--c)); } }
+@media (max-width: 1023.98px) { .nav__logo { width: calc(197 * var(--n)); } }
+/* all buttons: text truly centred, arrow pinned to the end */
+.btn, .btn--primary, .about__btn, .process__btn, .form .btn.form__send, .hero__ctas .btn, .legal__back { position: relative; justify-content: center !important; padding-inline: 48px !important; }
+.btn .btn__arrow { position: absolute !important; inset-inline-end: 9px; top: 50%; margin: 0 !important; translate: 0 -50%; }
+.btn .btn__label { text-align: center; }
+.process__btn { width: 236px !important; }
+@media (min-width: 1024px) {
+  .contact__text { right: calc((100% - var(--vw)) / 2 + 201px); }
+  .form { right: calc((100% - var(--vw)) / 2 + 430px); }
+}
+/* LET'S TALK: same blur-and-settle entrance as the headings */
+.js [data-reveal="talk"] { clip-path: none; opacity: 0; transform: translateY(28px); filter: blur(6px); transition: opacity 1s var(--ease), transform 1.1s var(--ease), filter 1s var(--ease); }
+.js [data-reveal="talk"].is-in { clip-path: none; opacity: 1; transform: none; filter: none; }
+@media (min-width: 1024px) { .step__text { font-size: 15px; margin-inline: -28px; } }
+/* talk-art: feather every edge so no box shows behind the swirl */
+@media (min-width: 1024px) {
+  .talk .contact__tube img { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 100%), linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 100%), linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+}
