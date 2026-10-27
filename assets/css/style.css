@@ -1293,9 +1293,9 @@ html.deck-locked { overscroll-behavior: none; }
 
 /* about v2: the glass panels themselves flip (outlines clipped from the artwork) */
 .aflip__card { position: absolute; inset: 0; flex: none; margin: 0; --ox: 16%; transform-origin: var(--ox) 50%; }
-.aflip__card:nth-of-type(1) { --ox: 16%; z-index: 1; }
-.aflip__card:nth-of-type(2) { --ox: 42%; z-index: 3; }
-.aflip__card:nth-of-type(3) { --ox: 70%; z-index: 2; }
+.aflip__card:nth-of-type(1) { --ox: 14%; z-index: 1; }
+.aflip__card:nth-of-type(2) { --ox: 39.3%; z-index: 3; }
+.aflip__card:nth-of-type(3) { --ox: 67.5%; z-index: 2; }
 .aflip__f { background-size: 100% 100% !important; background-position: 0 0 !important; transform-origin: var(--ox) 50%; }
 .aflip__f--b { transform: rotateY(180deg); }
 .aflip__base { position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; transition: opacity 1.4s ease; z-index: 0; }
@@ -1310,7 +1310,7 @@ html.deck-locked { overscroll-behavior: none; }
 @media (min-width: 1024px) { .nav__logo { width: calc(132 * var(--a)); } .footer__logo { width: calc(236 * var(--c)); } }
 @media (max-width: 1023.98px) { .nav__logo { width: calc(197 * var(--n)); } }
 /* all buttons: text truly centred, arrow pinned to the end */
-.btn, .btn--primary, .about__btn, .process__btn, .form .btn.form__send, .hero__ctas .btn, .legal__back { position: relative; justify-content: center !important; padding-inline: 48px !important; }
+.btn, .btn--primary, .about__btn, .process__btn, .form .btn.form__send, .hero__ctas .btn, .legal__back { justify-content: center !important; padding-inline: 48px !important; }
 .btn .btn__arrow { position: absolute !important; inset-inline-end: 9px; top: 50%; margin: 0 !important; translate: 0 -50%; }
 .btn .btn__label { text-align: center; }
 .process__btn { width: 236px !important; }
@@ -1326,3 +1326,6 @@ html.deck-locked { overscroll-behavior: none; }
 @media (min-width: 1024px) {
   .talk .contact__tube img { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 100%), linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 100%), linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
 }
+/* about art: keep the torus tail clear of the text column */
+.aflip { transform: scale(.87); transform-origin: 0 50%; }
+@media (max-width: 1023.98px) { .about__btn { left: 50% !important; right: auto !important; translate: -50% 0; } }

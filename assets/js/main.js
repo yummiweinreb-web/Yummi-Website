@@ -400,13 +400,13 @@
     const cards = $$(".aflip__card", box), baseA = $(".aflip__base--a", box), baseB = $(".aflip__base--b", box);
     const imgs = [1, 2, 3].map(i => `assets/img/about-flip-${i}.webp`);
     imgs.forEach(u => { const im = new Image(); im.src = u; });
-    /* panel outlines per picture (x, y in the 960×740 artwork): [left panel, middle panel, right panel] */
-    const POLY = [
-      [[[130,86],[247,98],[214,644],[80,644]], [[268,26],[550,60],[564,668],[190,672]], [[570,120],[670,100],[765,655],[755,688],[585,684]]],
-      [[[88,72],[248,94],[212,520],[30,536],[16,500]], [[278,30],[568,68],[582,110],[556,600],[182,600]], [[588,122],[720,102],[750,160],[765,420],[600,430]]],
-      [[[265,48],[420,54],[430,620],[170,618],[190,520]], [[420,40],[560,50],[582,98],[560,500],[430,500]], [[590,100],[700,88],[722,110],[775,590],[740,625],[610,570]]]
+    /* panel outlines (x, y in the 1100x848 artwork) - the three glass panels sit in the same place in every picture */
+    const PANELS = [
+      [[95,85],[285,106],[292,112],[207,655],[100,612],[18,550]],
+      [[300,60],[318,38],[640,78],[660,110],[612,655],[207,655]],
+      [[666,140],[805,115],[835,128],[872,668],[855,672],[612,655]]
     ];
-    const clip = (i, k) => "polygon(" + POLY[i][k].map(([x, y]) => (x / 9.6).toFixed(2) + "% " + (y / 7.4).toFixed(2) + "%").join(",") + ")";
+    const clip = (i, k) => "polygon(" + PANELS[k].map(([x, y]) => (x / 11).toFixed(2) + "% " + (y / 8.48).toFixed(2) + "%").join(",") + ")";
     const url = i => `url(${imgs[i % imgs.length]})`;
     const st = cards.map((c, k) => ({ c, k, ang: 0, a: $(".aflip__f--a", c), b: $(".aflip__f--b", c), imgA: 0 }));
     const setFace = (f, i, k) => { f.style.backgroundImage = url(i); f.style.clipPath = f.style.webkitClipPath = clip(i, k); };
