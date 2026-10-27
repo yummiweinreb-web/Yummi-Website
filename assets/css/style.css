@@ -1181,3 +1181,6 @@ html { overflow-x: clip; } .talk__script img { max-width: none; }
 .work__pin, .work--home .work__pin { position: relative !important; top: auto !important; }
 .work__spacer { display: none; }
 html.deck-locked { overscroll-behavior: none; }
+/* new logo: show its own colours */
+.nav__logo img, .footer__logo img { filter: none !important; }
+.nav__logo img { filter: drop-shadow(0 0 10px rgba(110, 70, 255, .35)) !important; }
