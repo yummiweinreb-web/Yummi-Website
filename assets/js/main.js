@@ -413,32 +413,18 @@
     const setFace = (f, i, k) => { f.style.backgroundImage = url(i); f.style.clipPath = f.style.webkitClipPath = clip(i, k); };
     st.forEach(o => { setFace(o.a, 0, o.k); setFace(o.b, 1, o.k); });
     baseA.style.backgroundImage = base(0); baseB.style.backgroundImage = base(1);
-    const blurUrl = i => `url(assets/img/about-blur-${(i % imgs.length) + 1}.webp)`;
-    const mkBlur = () => { const e = document.createElement("i"); e.className = "aflip__base aflip__blur"; e.style.opacity = 0; box.insertBefore(e, cards[0]); return e; };
-    const blurA = mkBlur(), blurB = mkBlur();
-    imgs.forEach((u, n) => { const b = new Image(); b.src = blurUrl(n).slice(4, -1); });
-    let idx = 0, timer = 0, running = false, first = 0, baseShowsB = false, blurShowsB = false;
-    const fade = (el, o, t) => { el.style.transition = `opacity ${t}s ease`; el.style.opacity = o; };
+    let idx = 0, timer = 0, running = false, first = 0, baseShowsB = false;
     const cycle = () => {
-      const cur = idx, next = (idx + 1) % imgs.length;
-      const [shown, other] = baseShowsB ? [baseB, baseA] : [baseA, baseB];
-      const [bCur, bNext] = blurShowsB ? [blurB, blurA] : [blurA, blurB];
-      /* 1) the sharp surroundings melt into a soft blur of colour - no shapes, no frames around the cards */
-      bCur.style.backgroundImage = blurUrl(cur); fade(bCur, 1, .45); fade(shown, 0, .45);
-      /* 2) the cards turn over nothing but that soft colour */
+      const next = (idx + 1) % imgs.length;
+      /* underlay cross-fades to the next picture while the panels turn */
+      const [show, hide] = baseShowsB ? [baseA, baseB] : [baseB, baseA];
+      show.style.backgroundImage = base(next); show.style.opacity = 1; hide.style.opacity = 0; baseShowsB = !baseShowsB;
       st.forEach((o, k) => setTimeout(() => {
         const frontShown = Math.round(Math.abs(o.ang) / 180) % 2 === 0;
         setFace(frontShown ? o.b : o.a, next, k);
         o.ang += (k % 2 ? -180 : 180);
         o.c.style.transform = `rotateY(${o.ang}deg)`;
-      }, 350 + [0, 340, 170][k]));
-      setTimeout(() => { bNext.style.backgroundImage = blurUrl(next); fade(bNext, 1, .9); fade(bCur, 0, .9); blurShowsB = !blurShowsB; }, 900);
-      /* 3) only when every card has finished turning, the areas between them fill in sharp again */
-      setTimeout(() => {
-        other.style.backgroundImage = base(next); fade(other, 1, .8);
-        fade(blurShowsB ? blurB : blurA, 0, .8);
-        baseShowsB = !baseShowsB;
-      }, 350 + 340 + 1500 + 80);
+      }, [0, 340, 170][k]));
       idx = next;
     };
     const start = () => { if (running || reduce) return; running = true; first = setTimeout(cycle, 1000); timer = setInterval(cycle, 4200); };

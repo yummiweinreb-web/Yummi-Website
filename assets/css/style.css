@@ -1332,4 +1332,3 @@ html.deck-locked { overscroll-behavior: none; }
 /* panels flip over empty space: the loose bits around them swap quickly while the cards are edge-on */
 .aflip__base { transition: opacity .55s ease .4s; }
 .aflip__card { transition: transform 1.5s cubic-bezier(.55, .05, .25, 1) !important; }
-.aflip__blur { -webkit-mask-image: radial-gradient(ellipse 52% 56% at 42% 52%, #000 45%, transparent 100%); mask-image: radial-gradient(ellipse 52% 56% at 42% 52%, #000 45%, transparent 100%); }
