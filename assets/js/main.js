@@ -533,6 +533,8 @@
       if (lastDy !== null) {
         if (lastDy > 0 && d <= 0 && t < steps) lock();       // arriving from above
         else if (lastDy < 0 && d >= 0 && t > 0) lock();      // arriving from below
+        else if (d < lastDy && d <= 0 && d > -innerHeight * .6 && t < steps) lock();   // fast fling overshot the section
+        else if (d > lastDy && d >= 0 && d < innerHeight * .6 && t > 0 && lastDy < innerHeight * .6) lock();  // same, scrolling up
       }
       lastDy = d;
     };
