@@ -25,43 +25,51 @@
   /* ------- script titles: Allison word + hand-drawn flourish ------- */
   const NS = "http://www.w3.org/2000/svg";
   const scripts = $$("[data-script]");
+  const SCRIPT_IMG = { "Websites": "websites", "About me": "about", "The process": "process", "Selected work": "work" };
+  /* hand-lettered neon titles: the picture is revealed along the strokes (pen time map), like writing it by hand */
   scripts.forEach(el => {
-    const svg = document.createElementNS(NS, "svg");
-    svg.setAttribute("aria-hidden", "true");
-    const l = document.createElementNS(NS, "path");
-    const r = document.createElementNS(NS, "path");
-    const t = document.createElementNS(NS, "text");
-    l.setAttribute("class", "script__flourish script__flourish--l");
-    r.setAttribute("class", "script__flourish script__flourish--r");
-    t.setAttribute("class", "script__text");
-    t.setAttribute("text-anchor", "middle");
-    t.setAttribute("direction", "ltr");
-    t.textContent = el.dataset.script;
-    svg.append(l, t, r);
-    el.append(svg);
-  });
-
-  function layoutScripts() {
-    scripts.forEach(el => {
-      const svg = $("svg", el), t = $("text", el), l = $(".script__flourish--l", el), r = $(".script__flourish--r", el);
-      const H = 60, W = Math.max(120, Math.round((el.clientWidth / Math.max(1, el.clientHeight)) * H));
-      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-      t.setAttribute("x", W / 2);
-      t.setAttribute("y", 44);
-      t.setAttribute("font-size", el.dataset.fs || 60);
-      let bb;
-      try { bb = t.getBBox(); } catch (e) { return; }
-      if (!bb.width) return;
-      const x1 = bb.x + 4, x2 = bb.x + bb.width - 3, yb = 46;
-      // left stroke: comes in from the edge with a soft wave and lifts into the first letter
-      l.setAttribute("d", `M2 ${yb - 6} C ${x1 * .28} ${yb - 16}, ${x1 * .55} ${yb + 2}, ${x1 * .78} ${yb - 4} S ${x1 - 2} ${yb - 20}, ${x1 + 2} ${yb - 22}`);
-      // right stroke: leaves the last letter, runs out and curls up at the end
-      const span = W - x2;
-      r.setAttribute("d", `M${x2} ${yb - 3} C ${x2 + span * .3} ${yb + 3}, ${x2 + span * .55} ${yb - 14}, ${x2 + span * .8} ${yb - 13} S ${W - 3} ${yb - 4}, ${W - 2} ${yb - 9}`);
-      [l, r].forEach(p => { const len = Math.ceil(p.getTotalLength()) + 2; p.style.setProperty("--len", len); });
+    const name = SCRIPT_IMG[el.dataset.script]; if (!name) return;
+    const cv = document.createElement("canvas"); cv.className = "script__pen";
+    el.append(cv);
+    const ld = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
+    Promise.all([ld(`assets/img/script-${name}.webp`), ld(`assets/img/script-${name}-t.png`)]).then(([img, map]) => {
+      if (!img || !map) { cv.replaceWith(Object.assign(new Image(), { src: `assets/img/script-${name}.webp`, alt: "", className: "script__pen" })); return; }
+      const W = img.naturalWidth, H = img.naturalHeight;
+      cv.width = W; cv.height = H; cv.style.aspectRatio = `${W} / ${H}`;
+      const ctx = cv.getContext("2d", { willReadFrequently: true });
+      const grab = im => { const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(im, 0, 0, W, H); return x.getImageData(0, 0, W, H); };
+      const src = grab(img), tm = grab(map), out = ctx.createImageData(W, H);
+      const sd = src.data, td = tm.data, od = out.data;
+      for (let k = 0; k < sd.length; k++) od[k] = sd[k];
+      const draw = p => {
+        const soft = .06;
+        for (let i = 0; i < sd.length; i += 4) {
+          const a = (p * (1 + soft) - td[i] / 255) / soft;
+          od[i + 3] = a <= 0 ? 0 : a >= 1 ? sd[i + 3] : sd[i + 3] * a;
+        }
+        ctx.putImageData(out, 0, 0);
+      };
+      draw(0);
+      const isHero = el.classList.contains("hero__script");
+      let started = false;
+      const play = () => {
+        if (started) return; started = true;
+        const dur = reduce ? 1 : 2300, t0 = performance.now() + 350;
+        const tick = now => {
+          const k = Math.min(1, Math.max(0, (now - t0) / dur));
+          draw(1 - Math.pow(1 - k, 2.2) * (1 - k * .15) * 1);   // eases out like a pen slowing at the end
+          if (k < 1) requestAnimationFrame(tick); else draw(1);
+        };
+        requestAnimationFrame(tick);
+      };
+      const ready = () => isHero ? document.body.classList.contains("is-ready") : el.classList.contains("is-in");
+      const check = () => { if (ready()) play(); };
+      new MutationObserver(check).observe(isHero ? document.body : el, { attributes: true, attributeFilter: ["class"] });
+      check();
     });
-    scribbleLayout();
-  }
+  });
+  function layoutScripts() {}
+  function scribbleLayout() {}
 
   /* ------- project names: biggest size that fits the column (like the mockup) ------- */
   function fitNames() {
