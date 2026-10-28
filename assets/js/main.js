@@ -499,7 +499,7 @@
     const deck = $(".deck"); if (!deck) return;
     const sec = deck.closest(".work--home"), pin = $(".work__pin", sec);
     const cards = $$(".gcard", deck), n = cards.length, steps = n - 1;
-    const PX = 380;                       // wheel pixels per screen
+    const PX = 640;                       // wheel pixels per screen
     let pinTop = 0, cur = 0, t = 0, raf = 0, locked = false, lastDy = null, ty = 0;
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const measure = () => { const vh = innerHeight, ph = pin.offsetHeight; pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph); };
@@ -509,7 +509,7 @@
       c.style.setProperty("--i", i.toFixed(3)); c.style.setProperty("--f", f.toFixed(3));
       c.style.opacity = Math.max(0, o).toFixed(3); c.style.zIndex = 30 - k; c.style.visibility = o <= .002 ? "hidden" : "";
     });
-    const loop = () => { cur += (t - cur) * .1; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
+    const loop = () => { cur += (t - cur) * .08; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
     const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
     const dy = () => pin.getBoundingClientRect().top - pinTop;
     const snap = () => { const y = scrollY + dy(); if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
@@ -519,7 +519,7 @@
       t = clamp(t + d / PX, 0, steps); kick();
       if ((d > 0 && t >= steps) || (d < 0 && t <= 0)) { cur = t; paint(cur); unlock(); }
     };
-    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); drive(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
+    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); const dd = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY; drive(Math.max(-140, Math.min(140, dd))); }, { passive: false });
     addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
     addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; drive((ty - y) * 1.6); ty = y; }, { passive: false });
     addEventListener("keydown", e => {
