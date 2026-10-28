@@ -1330,22 +1330,7 @@ html.deck-locked { overscroll-behavior: none; }
 .aflip { transform: scale(.87); transform-origin: 0 50%; }
 @media (max-width: 1023.98px) { .about__btn { left: 50% !important; right: auto !important; translate: -50% 0; } }
 
-/* round 9 */
-@media (min-width: 1024px) {
-  .hero__art { left: calc(47 * var(--a)); top: calc(45 * var(--a)); width: calc(766 * var(--a)); height: calc(623 * var(--a)); }
-}
-@media (min-width: 1024px) {
-  .hero__art { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
-}
 
-/* small lime swirl in the hero */
-.hero__lime { position: absolute; z-index: 2; width: calc(150 * var(--a)); left: calc(50% - 400px); top: calc(470 * var(--a)); overflow: visible; pointer-events: none; filter: drop-shadow(0 0 14px rgba(177, 251, 1, .55)); animation: limeFloat 6s ease-in-out infinite; }
-.lime-s { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.lime-s--sh { stroke: #4a7a00; stroke-width: 15; }
-.lime-s--body { stroke: url(#lg); stroke-width: 12; }
-.lime-s--hi { stroke: rgba(255, 255, 255, .75); stroke-width: 2.6; }
-@keyframes limeFloat { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
-@media (max-width: 1023.98px) { .hero__lime { width: calc(120 * var(--n)); left: calc(50% - 168px); top: calc(440 * var(--n)); } }
 
 /* Coffee. Work. Repeat. */
 .about__art { overflow: visible; }
@@ -1386,3 +1371,44 @@ html.deck-locked { overscroll-behavior: none; }
   .work__script { left: calc(121 * var(--p)); width: calc(220 * var(--p)); translate: 0 -6px; }
   .work--home .work__script { left: calc(50% - 110 * var(--p)); }
 }
+
+/* round 10 */
+.loader__bar { display: none; }
+.loader__wave { width: min(260px, 60vw); height: auto; overflow: visible; filter: drop-shadow(0 0 10px rgba(139, 44, 245, .8)); }
+.loader__wave path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.loader__track { stroke: rgba(255, 255, 255, .08); stroke-width: 7; }
+.loader__fill { stroke: url(#lw); stroke-width: 7; stroke-dasharray: 1; stroke-dashoffset: 1; animation: waveFill 1.4s cubic-bezier(.5, 0, .2, 1) .15s forwards; }
+@keyframes waveFill { to { stroke-dashoffset: 0; } }
+
+/* handwritten titles melt into the background */
+.about__script, .process__script { opacity: .78; mix-blend-mode: screen; }
+.about__script .script__pen, .process__script .script__pen { filter: blur(.5px) saturate(.9); }
+.about__script { right: calc(33 * var(--a) - 45px); }
+@media (max-width: 1023.98px) { .about__script { right: auto; left: calc(236 * var(--n) + 18px); } }
+
+.step__text .lime { font-weight: 900; }
+@media (min-width: 1024px) { .process { margin-top: 40px; } }
+@media (max-width: 1023.98px) { .process { margin-top: 24px; } }
+
+/* Coffee. Work. Repeat. - huge, blended into the picture */
+.about__loop { left: 0; right: 0; bottom: 0; flex-direction: column; align-items: flex-start; gap: 0; padding-inline-start: 6%; font-size: 92px; line-height: .86; letter-spacing: -.01em; mix-blend-mode: screen; text-shadow: none; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 40%); mask-image: linear-gradient(180deg, transparent 0, #000 40%); }
+.about__loop span { animation-name: loopWordBig; }
+.about__loop span:nth-child(1) { color: rgba(255, 255, 255, .55); }
+.about__loop span:nth-child(2) { color: rgba(177, 251, 1, .6); }
+.about__loop span:nth-child(3) { color: rgba(255, 79, 174, .6); }
+@keyframes loopWordBig { 0% { opacity: 0; transform: translateY(26px) scale(.94); filter: blur(10px); } 9%, 76% { opacity: 1; transform: none; filter: blur(.6px); } 88%, 100% { opacity: 0; transform: translateY(-12px); filter: blur(8px); } }
+@media (max-width: 1023.98px) { .about__loop { font-size: calc(70 * var(--n)); bottom: 0; } }
+.talk__script canvas.script__pen { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
+.js [data-reveal="talk"], .js [data-reveal="talk"].is-in { transform: none !important; filter: none !important; }
+.js [data-reveal="talk"] { transition: opacity .3s; }
+/* words take turns in the same spot, at the foot of the picture */
+.about__loop { display: grid; justify-items: center; align-items: end; padding: 0; bottom: 6px; font-size: 96px; line-height: 1; -webkit-mask-image: none; mask-image: none; }
+.about__loop span { grid-area: 1 / 1; animation: loopTurn 6.6s cubic-bezier(.22, 1, .36, 1) infinite; opacity: 0; }
+.about__loop span:nth-child(1) { animation-delay: 0s; }
+.about__loop span:nth-child(2) { animation-delay: 2.2s; }
+.about__loop span:nth-child(3) { animation-delay: 4.4s; }
+.about__loop span:nth-child(1), .about__loop span:nth-child(2), .about__loop span:nth-child(3) { color: rgba(255, 255, 255, .62); }
+.about__loop span:nth-child(2) { color: rgba(177, 251, 1, .7); }
+.about__loop span:nth-child(3) { color: rgba(255, 110, 190, .7); }
+@keyframes loopTurn { 0% { opacity: 0; transform: translateY(30px) scale(.92); filter: blur(12px); } 8%, 28% { opacity: 1; transform: none; filter: blur(.5px); } 36%, 100% { opacity: 0; transform: translateY(-14px) scale(1.03); filter: blur(10px); } }
+@media (max-width: 1023.98px) { .about__loop { font-size: calc(78 * var(--n)); bottom: 0; } }

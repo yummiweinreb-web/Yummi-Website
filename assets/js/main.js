@@ -71,6 +71,45 @@
   function layoutScripts() {}
   function scribbleLayout() {}
 
+  /* ------- LET'S TALK: written in with the pen, like the other hand-lettered titles ------- */
+  (() => {
+    const holder = $(".talk__script"); if (!holder) return;
+    const img = $("img", holder), pic = $("picture", holder), srcEl = pic && $("source", pic);
+    if (!img || reduce) return;
+    const cv = document.createElement("canvas"); cv.className = "script__pen"; holder.append(cv);
+    const ld = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+    let draw = null, key = "", started = false, prog = 0;
+    const copyStyle = () => { const cs = getComputedStyle(img); ["mixBlendMode", "webkitMaskImage", "maskImage", "webkitMaskComposite", "maskComposite"].forEach(k => { try { cv.style[k] = cs[k]; } catch (e) {} }); };
+    const build = async () => {
+      const src = (srcEl && matchMedia(srcEl.media).matches) ? srcEl.getAttribute("srcset") : img.getAttribute("src");
+      if (key === src) return; key = src;
+      const base = src.split("/").pop().replace(/\.\w+$/, "");
+      const [im, map] = await Promise.all([ld(src), ld(`assets/img/maps/${base}.png`)]);
+      if (!im || !map || key !== src) return;
+      const W = im.naturalWidth, H = im.naturalHeight; cv.width = W; cv.height = H;
+      const grab = i => { const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(i, 0, 0, W, H); return x.getImageData(0, 0, W, H); };
+      const s = grab(im), t = grab(map), ctx = cv.getContext("2d"), out = ctx.createImageData(W, H);
+      draw = p => {
+        for (let i = 0; i < s.data.length; i += 4) {
+          const a = Math.max(0, Math.min(1, (p * 1.08 - t.data[i] / 255) / .06));
+          out.data[i] = s.data[i] * a; out.data[i + 1] = s.data[i + 1] * a; out.data[i + 2] = s.data[i + 2] * a; out.data[i + 3] = 255;
+        }
+        ctx.putImageData(out, 0, 0);
+      };
+      draw(prog); copyStyle(); img.style.visibility = "hidden";
+    };
+    build(); srcEl && matchMedia(srcEl.media).addEventListener("change", () => { build(); setTimeout(copyStyle, 50); });
+    addEventListener("resize", () => requestAnimationFrame(copyStyle), { passive: true });
+    const play = () => {
+      if (started) return; started = true;
+      const dur = 2600, t0 = performance.now() + 300;
+      const tick = now => { const k = Math.min(1, Math.max(0, (now - t0) / dur)); prog = 1 - Math.pow(1 - k, 2.2); draw && draw(prog); if (k < 1) requestAnimationFrame(tick); else { prog = 1; draw && draw(1); } };
+      requestAnimationFrame(tick);
+    };
+    const check = () => { if (holder.classList.contains("is-in")) play(); };
+    new MutationObserver(check).observe(holder, { attributes: true, attributeFilter: ["class"] }); check();
+  })();
+
   /* ------- project names: biggest size that fits the column (like the mockup) ------- */
   function fitNames() {
     $$(".project__name").forEach(h => {
