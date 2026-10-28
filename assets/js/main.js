@@ -517,11 +517,11 @@
     const unlock = () => { if (!locked) return; locked = false; lenis?.start(); document.documentElement.classList.remove("deck-locked"); lastDy = 0; };
     /* discrete stepping: one wheel gesture = one screen (a hard / fast flick = several), and a started move always finishes */
     const busy = () => Math.abs(t - cur) > .02;
-    let acc = 0, lastDir = 0, lastStep = 0, hist = [];
-    const step = (dir, n = 1) => {
+    let acc = 0, lastDir = 0, lastStep = 0, lastEvt = 0, lastEvt0 = 0, hist = [];
+    const step = (dir, n = 1, fresh = true) => {
       const nt = t + dir * n;
       if (nt < 0 || nt > steps) {                                   // already at the end → hand the page back
-        if (busy() && Math.sign(t - cur) === dir) return;
+        if (!fresh || busy()) return;                                 // only a deliberate new gesture (not inertia) leaves the section
         t = clamp(nt, 0, steps); cur = t; paint(cur); unlock(); return;
       }
       t = nt; lastStep = performance.now(); kick();
@@ -529,15 +529,17 @@
     };
     const gesture = (dd, strongAfter = 40) => {
       const now = performance.now(), dir = Math.sign(dd); if (!dir) return;
+      const fresh = now - lastEvt > 250 && now - lastStep > 800; lastEvt = now;
       hist.push([now, Math.abs(dd)]); hist = hist.filter(h => now - h[0] < 160);
       const v = hist.reduce((s, h) => s + h[1], 0);               // px in the last ~160ms = how hard / fast
-      if (dir !== lastDir) { acc = 0; lastDir = dir; }
+      if (dir !== lastDir || now - lastEvt0 > 250) { acc = 0; lastDir = dir; }
+      lastEvt0 = now;
       acc += dd;
-      if (Math.abs(acc) < strongAfter) return;
+      const need = busy() ? strongAfter * 3.5 : strongAfter;     // while a move is running, only keep stepping if the scrolling really continues
+      if (Math.abs(acc) < need) return;
       const strong = v > 900 && now - lastStep > 150;
-      if (busy() && !strong && Math.sign(t - cur) === dir) { acc = 0; return; }   // inertia of the same move: swallow
       acc = 0;
-      step(dir, strong ? Math.min(3, Math.max(2, Math.round(v / 700))) : 1);
+      step(dir, strong ? Math.min(3, Math.max(2, Math.round(v / 700))) : 1, fresh);
     };
     addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); gesture(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
     addEventListener("touchstart", e => { ty = e.touches[0].clientY; acc = 0; }, { passive: true });
