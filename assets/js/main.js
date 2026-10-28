@@ -499,55 +499,33 @@
     const deck = $(".deck"); if (!deck) return;
     const sec = deck.closest(".work--home"), pin = $(".work__pin", sec);
     const cards = $$(".gcard", deck), n = cards.length, steps = n - 1;
-    const PX = 640;                       // wheel pixels per screen
+    const PX = 380;                       // wheel pixels per screen
     let pinTop = 0, cur = 0, t = 0, raf = 0, locked = false, lastDy = null, ty = 0;
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const measure = () => { const vh = innerHeight, ph = pin.offsetHeight; pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph); };
     const paint = v => cards.forEach((c, k) => {
       const r = k - v, f = r < 0 ? clamp(-r) : 0, i = Math.max(0, r);
-      const o = r <= -1 ? 0 : (1 - clamp(f * 1.02)) * clamp((5 - i) / 1.6) * (1 - i * .1);
+      const o = r <= -1 ? 0 : (1 - clamp(f * 1.35)) * clamp((5 - i) / 1.6) * (1 - i * .1);
       c.style.setProperty("--i", i.toFixed(3)); c.style.setProperty("--f", f.toFixed(3));
       c.style.opacity = Math.max(0, o).toFixed(3); c.style.zIndex = 30 - k; c.style.visibility = o <= .002 ? "hidden" : "";
     });
-    const loop = () => { cur += (t - cur) * .05; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
+    const loop = () => { cur += (t - cur) * .1; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
     const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
     const dy = () => pin.getBoundingClientRect().top - pinTop;
     const snap = () => { const y = scrollY + dy(); if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
     const lock = () => { if (locked) return; locked = true; snap(); lenis?.stop(); document.documentElement.classList.add("deck-locked"); };
     const unlock = () => { if (!locked) return; locked = false; lenis?.start(); document.documentElement.classList.remove("deck-locked"); lastDy = 0; };
-    /* discrete stepping: one wheel gesture = one screen (a hard / fast flick = several), and a started move always finishes */
-    const busy = () => Math.abs(t - cur) > .02;
-    let acc = 0, lastDir = 0, lastStep = 0, lastEvt = 0, lastEvt0 = 0, hist = [];
-    const step = (dir, n = 1, fresh = true) => {
-      const nt = t + dir * n;
-      if (nt < 0 || nt > steps) {                                   // already at the end → hand the page back
-        if (!fresh || busy()) return;                                 // only a deliberate new gesture (not inertia) leaves the section
-        t = clamp(nt, 0, steps); cur = t; paint(cur); unlock(); return;
-      }
-      t = nt; lastStep = performance.now(); kick();
-      if (t <= 0 || t >= steps) { /* stay locked until the user pushes past the end */ }
+    const drive = d => {                                   // d = pixels (+ = scroll down)
+      t = clamp(t + d / PX, 0, steps); kick();
+      if ((d > 0 && t >= steps) || (d < 0 && t <= 0)) { cur = t; paint(cur); unlock(); }
     };
-    const gesture = (dd, strongAfter = 40) => {
-      const now = performance.now(), dir = Math.sign(dd); if (!dir) return;
-      const fresh = now - lastEvt > 250 && now - lastStep > 800; lastEvt = now;
-      hist.push([now, Math.abs(dd)]); hist = hist.filter(h => now - h[0] < 160);
-      const v = hist.reduce((s, h) => s + h[1], 0);               // px in the last ~160ms = how hard / fast
-      if (dir !== lastDir || now - lastEvt0 > 250) { acc = 0; lastDir = dir; }
-      lastEvt0 = now;
-      acc += dd;
-      const need = busy() ? strongAfter * 3.5 : strongAfter;     // while a move is running, only keep stepping if the scrolling really continues
-      if (Math.abs(acc) < need) return;
-      const strong = v > 900 && now - lastStep > 150;
-      acc = 0;
-      step(dir, strong ? Math.min(3, Math.max(2, Math.round(v / 700))) : 1, fresh);
-    };
-    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); gesture(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
-    addEventListener("touchstart", e => { ty = e.touches[0].clientY; acc = 0; }, { passive: true });
-    addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; gesture((ty - y) * 1.6, 60); ty = y; }, { passive: false });
+    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); drive(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
+    addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
+    addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; drive((ty - y) * 1.6); ty = y; }, { passive: false });
     addEventListener("keydown", e => {
       if (!locked) return;
-      const k = { ArrowDown: 1, PageDown: 1, " ": 1, ArrowUp: -1, PageUp: -1 }[e.key];
-      if (k) { e.preventDefault(); if (!busy()) step(k); }
+      const k = { ArrowDown: 80, PageDown: 400, " ": 400, ArrowUp: -80, PageUp: -400 }[e.key];
+      if (k) { e.preventDefault(); drive(k); }
     });
     const watch = () => {
       if (locked) return;
@@ -555,8 +533,6 @@
       if (lastDy !== null) {
         if (lastDy > 0 && d <= 0 && t < steps) lock();       // arriving from above
         else if (lastDy < 0 && d >= 0 && t > 0) lock();      // arriving from below
-        else if (d < lastDy && d <= 0 && d > -innerHeight * .6 && t < steps) lock();   // fast fling overshot the section
-        else if (d > lastDy && d >= 0 && d < innerHeight * .6 && t > 0 && lastDy < innerHeight * .6) lock();  // same, scrolling up
       }
       lastDy = d;
     };
