@@ -1329,3 +1329,44 @@ html.deck-locked { overscroll-behavior: none; }
 /* about art: keep the torus tail clear of the text column */
 .aflip { transform: scale(.87); transform-origin: 0 50%; }
 @media (max-width: 1023.98px) { .about__btn { left: 50% !important; right: auto !important; translate: -50% 0; } }
+
+/* round 9 */
+@media (min-width: 1024px) {
+  .hero__art { left: calc(47 * var(--a)); top: calc(45 * var(--a)); width: calc(766 * var(--a)); height: calc(623 * var(--a)); }
+}
+@media (min-width: 1024px) {
+  .hero__art { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+}
+
+/* small lime swirl in the hero */
+.hero__lime { position: absolute; z-index: 2; width: calc(150 * var(--a)); left: calc(50% - 400px); top: calc(470 * var(--a)); overflow: visible; pointer-events: none; filter: drop-shadow(0 0 14px rgba(177, 251, 1, .55)); animation: limeFloat 6s ease-in-out infinite; }
+.lime-s { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.lime-s--sh { stroke: #4a7a00; stroke-width: 15; }
+.lime-s--body { stroke: url(#lg); stroke-width: 12; }
+.lime-s--hi { stroke: rgba(255, 255, 255, .75); stroke-width: 2.6; }
+@keyframes limeFloat { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+@media (max-width: 1023.98px) { .hero__lime { width: calc(120 * var(--n)); left: calc(50% - 168px); top: calc(440 * var(--n)); } }
+
+/* Coffee. Work. Repeat. */
+.about__art { overflow: visible; }
+.about__loop { position: absolute; left: 0; right: 0; bottom: -6px; margin: 0; z-index: 4; display: flex; justify-content: center; gap: .55em; direction: ltr; font-weight: 900; font-size: 22px; letter-spacing: .02em; pointer-events: none; text-shadow: 0 0 18px rgba(98, 6, 232, .9); }
+.about__loop span { opacity: 0; display: inline-block; animation: loopWord 6.5s cubic-bezier(.22, 1, .36, 1) infinite; }
+.about__loop span:nth-child(1) { color: #fff; animation-delay: 0s; }
+.about__loop span:nth-child(2) { color: var(--lime); animation-delay: .6s; }
+.about__loop span:nth-child(3) { color: #ff4fae; animation-delay: 1.2s; }
+@keyframes loopWord { 0% { opacity: 0; transform: translateY(18px) scale(.9); filter: blur(8px); } 9%, 76% { opacity: 1; transform: none; filter: none; } 88%, 100% { opacity: 0; transform: translateY(-10px) scale(1.04); filter: blur(6px); } }
+@media (max-width: 1023.98px) { .about__loop { font-size: calc(26 * var(--n)); bottom: calc(-14 * var(--n)); } }
+
+/* "לכל העבודות" button: room for the arrow on both sides */
+.gallery__more .btn { width: 250px !important; padding-inline: 60px !important; }
+
+/* talk: video's right edge lines up with the form's right edge above it */
+@media (min-width: 1024px) {
+  .talk__media { right: calc((100% - var(--vw)) / 2 + 430px); }
+  .talk .contact__tube img { -webkit-mask-image: none !important; mask-image: none !important; }
+}
+.about__loop { bottom: 30px; }
+@media (max-width: 1023.98px) { .about__loop { bottom: calc(8 * var(--n)); } }
+@media (min-width: 1024px) {
+  .talk .contact__tube img { -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%) !important; mask-image: linear-gradient(180deg, #000 78%, transparent 100%) !important; }
+}
