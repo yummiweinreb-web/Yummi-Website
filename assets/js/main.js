@@ -505,11 +505,11 @@
     const measure = () => { const vh = innerHeight, ph = pin.offsetHeight; pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph); };
     const paint = v => cards.forEach((c, k) => {
       const r = k - v, f = r < 0 ? clamp(-r) : 0, i = Math.max(0, r);
-      const o = r <= -1 ? 0 : (1 - clamp(f * 1.35)) * clamp((5 - i) / 1.6) * (1 - i * .1);
+      const o = r <= -1 ? 0 : (1 - clamp(f * 1.02)) * clamp((5 - i) / 1.6) * (1 - i * .1);
       c.style.setProperty("--i", i.toFixed(3)); c.style.setProperty("--f", f.toFixed(3));
       c.style.opacity = Math.max(0, o).toFixed(3); c.style.zIndex = 30 - k; c.style.visibility = o <= .002 ? "hidden" : "";
     });
-    const loop = () => { cur += (t - cur) * .11; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
+    const loop = () => { cur += (t - cur) * .05; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
     const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
     const dy = () => pin.getBoundingClientRect().top - pinTop;
     const snap = () => { const y = scrollY + dy(); if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
