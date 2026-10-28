@@ -1412,3 +1412,12 @@ html.deck-locked { overscroll-behavior: none; }
 .about__loop span:nth-child(3) { color: rgba(255, 110, 190, .7); }
 @keyframes loopTurn { 0% { opacity: 0; transform: translateY(30px) scale(.92); filter: blur(12px); } 8%, 28% { opacity: 1; transform: none; filter: blur(.5px); } 36%, 100% { opacity: 0; transform: translateY(-14px) scale(1.03); filter: blur(10px); } }
 @media (max-width: 1023.98px) { .about__loop { font-size: calc(78 * var(--n)); bottom: 0; } }
+.work__script { opacity: .78; mix-blend-mode: screen; }
+.work__script .script__pen { filter: blur(.5px) saturate(.9); }
+/* work page: 8 projects flow naturally, contact/talk follow below */
+.project__tag { white-space: normal; text-align: right; }
+@media (min-width: 1024px) {
+  .page-work .work { height: auto; padding-top: calc(188 * var(--b)); padding-bottom: 60px; }
+  .page-work .projects { position: relative; top: auto; right: auto; margin-right: calc(26 * var(--b)); margin-left: auto; }
+}
+@media (min-width: 1024px) { .page-work .work { padding-bottom: 0; } }
