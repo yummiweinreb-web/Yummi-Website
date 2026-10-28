@@ -1454,3 +1454,12 @@ html.deck-locked { overscroll-behavior: none; }
   mask-image: radial-gradient(ellipse 62% 70% at 50% 50%, #000 25%, transparent 100%);
 }
 @media (min-width: 1024px) { .about__loop { right: 80px; } }
+
+/* round 14 – work page: no side waves, full un-zoomed screenshots */
+.page-work .work__waves { display: none !important; }
+.page-work .browser__screen { aspect-ratio: 1200 / 662; }
+.page-work .browser__screen img, .page-work .browser:hover .browser__screen img,
+.js .page-work [data-reveal="project"] .project__media .browser__screen img,
+.js .page-work [data-reveal="project"] .project__media .browser:hover .browser__screen img { object-fit: fill; transform: none !important; }
+@media (min-width: 1024px) { .page-work .project__media .project__url { top: calc(252 * var(--b)); } }
+@media (max-width: 1023.98px) { .page-work .browser__screen { aspect-ratio: 1200 / 662; } }
