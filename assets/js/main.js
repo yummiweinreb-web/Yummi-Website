@@ -509,23 +509,43 @@
       c.style.setProperty("--i", i.toFixed(3)); c.style.setProperty("--f", f.toFixed(3));
       c.style.opacity = Math.max(0, o).toFixed(3); c.style.zIndex = 30 - k; c.style.visibility = o <= .002 ? "hidden" : "";
     });
-    const loop = () => { cur += (t - cur) * .08; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
+    const loop = () => { cur += (t - cur) * .11; if (Math.abs(t - cur) < .0008) cur = t; paint(cur); raf = cur !== t ? requestAnimationFrame(loop) : 0; };
     const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
     const dy = () => pin.getBoundingClientRect().top - pinTop;
     const snap = () => { const y = scrollY + dy(); if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo(0, y); };
     const lock = () => { if (locked) return; locked = true; snap(); lenis?.stop(); document.documentElement.classList.add("deck-locked"); };
     const unlock = () => { if (!locked) return; locked = false; lenis?.start(); document.documentElement.classList.remove("deck-locked"); lastDy = 0; };
-    const drive = d => {                                   // d = pixels (+ = scroll down)
-      t = clamp(t + d / PX, 0, steps); kick();
-      if ((d > 0 && t >= steps) || (d < 0 && t <= 0)) { cur = t; paint(cur); unlock(); }
+    /* discrete stepping: one wheel gesture = one screen (a hard / fast flick = several), and a started move always finishes */
+    const busy = () => Math.abs(t - cur) > .02;
+    let acc = 0, lastDir = 0, lastStep = 0, hist = [];
+    const step = (dir, n = 1) => {
+      const nt = t + dir * n;
+      if (nt < 0 || nt > steps) {                                   // already at the end → hand the page back
+        if (busy() && Math.sign(t - cur) === dir) return;
+        t = clamp(nt, 0, steps); cur = t; paint(cur); unlock(); return;
+      }
+      t = nt; lastStep = performance.now(); kick();
+      if (t <= 0 || t >= steps) { /* stay locked until the user pushes past the end */ }
     };
-    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); const dd = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY; drive(Math.max(-140, Math.min(140, dd))); }, { passive: false });
-    addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
-    addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; drive((ty - y) * 1.6); ty = y; }, { passive: false });
+    const gesture = (dd, strongAfter = 40) => {
+      const now = performance.now(), dir = Math.sign(dd); if (!dir) return;
+      hist.push([now, Math.abs(dd)]); hist = hist.filter(h => now - h[0] < 160);
+      const v = hist.reduce((s, h) => s + h[1], 0);               // px in the last ~160ms = how hard / fast
+      if (dir !== lastDir) { acc = 0; lastDir = dir; }
+      acc += dd;
+      if (Math.abs(acc) < strongAfter) return;
+      const strong = v > 900 && now - lastStep > 150;
+      if (busy() && !strong && Math.sign(t - cur) === dir) { acc = 0; return; }   // inertia of the same move: swallow
+      acc = 0;
+      step(dir, strong ? Math.min(3, Math.max(2, Math.round(v / 700))) : 1);
+    };
+    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); gesture(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
+    addEventListener("touchstart", e => { ty = e.touches[0].clientY; acc = 0; }, { passive: true });
+    addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; gesture((ty - y) * 1.6, 60); ty = y; }, { passive: false });
     addEventListener("keydown", e => {
       if (!locked) return;
-      const k = { ArrowDown: 80, PageDown: 400, " ": 400, ArrowUp: -80, PageUp: -400 }[e.key];
-      if (k) { e.preventDefault(); drive(k); }
+      const k = { ArrowDown: 1, PageDown: 1, " ": 1, ArrowUp: -1, PageUp: -1 }[e.key];
+      if (k) { e.preventDefault(); if (!busy()) step(k); }
     });
     const watch = () => {
       if (locked) return;
