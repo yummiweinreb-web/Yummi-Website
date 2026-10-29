@@ -1496,7 +1496,8 @@ html.deck-locked { overscroll-behavior: none; }
 .blog__sub { position: relative; font-size: 22px; margin: 0; opacity: .85; max-width: 560px; }
 .blog__grid { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 36px; row-gap: 70px; max-width: 1180px; margin: 0 auto; padding: 0 24px; perspective: 1600px; }
 .bcard { position: relative; display: flex; flex-direction: column; gap: 22px; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; text-decoration: none; color: inherit; grid-column: span 6; opacity: 0; transform: translateY(70px) rotate(var(--rot, 0deg)); transition: opacity .9s var(--ease), transform .9s var(--ease); }
-.bcard.is-in { opacity: 1; transform: translate3d(0, var(--py, 0px), 0) rotate(var(--rot, 0deg)); transition: opacity .9s var(--ease), transform .12s linear; }
+.bcard.is-in { opacity: 1; transform: translate3d(0, var(--py, 0px), 0) rotate(var(--rot, 0deg)); transition: opacity .9s var(--ease), transform 1.3s var(--ease); }
+.bcard.is-in.is-set { transition: opacity .9s var(--ease), transform .12s linear; }
 .bcard:nth-child(4n+1) { grid-column: 1 / span 7; --rot: -2deg; }
 .bcard:nth-child(4n+2) { grid-column: 8 / span 5; --rot: 2.2deg; margin-top: 110px; }
 .bcard:nth-child(4n+3) { grid-column: 1 / span 5; --rot: 1.8deg; }
