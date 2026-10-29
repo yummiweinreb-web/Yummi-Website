@@ -1578,3 +1578,5 @@ html.deck-locked { overscroll-behavior: none; }
 .post__linkcard strong { color: #1d1535; } .post__linkcard span { color: #3a2e57; opacity: .85; }
 .post__linkcard em { color: #5a2be0; }
 .page-legal-body .post .legal__back { margin-top: 36px; }
+.post__img { border-radius: 0; box-shadow: none; }
+.post__video { max-width: 336px; }
