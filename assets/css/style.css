@@ -1610,3 +1610,4 @@ html.deck-locked { overscroll-behavior: none; }
 .post__body span[style*="1.47em"] b { -webkit-text-fill-color: transparent; }
 .post__body .post__img { width: 100%; }
 .post__body .post__img.post__img--half { width: 50%; margin: 18px 0 18px auto; }
+.post__body .post__img.post__img--s60 { width: 60%; margin: 18px 0 18px auto; }
