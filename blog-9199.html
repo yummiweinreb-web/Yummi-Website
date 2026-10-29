@@ -209,6 +209,60 @@
       <a class="btn btn--primary legal__back" href="blog.html"><span class="btn__label">חזרה לבלוג</span><span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span></a>
     </article>
   </main>
+    <section class="contact" id="contact">
+      <div class="contact__glow contact__glow--a" aria-hidden="true"></div>
+      <div class="contact__glow contact__glow--b" aria-hidden="true"></div>
+      <div class="contact__tube" data-reveal="tube" aria-hidden="true"><picture><source media="(max-width: 1023.98px)" srcset="assets/img/tube-m.webp"><img src="assets/img/tube.webp" alt="" width="1544" height="1400" loading="lazy"></picture></div>
+
+      <div class="contact__text">
+        <h2 class="contact__title" data-reveal>
+          <span class="line">תגידו</span>
+          <span class="line"><span class="u">יאמי<svg class="u__line" viewBox="0 0 140 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8.5C30 3.5 70 2.5 137 6.5"/></svg></span></span>
+        </h2>
+      </div>
+
+      <form class="form" id="contact-form" novalidate data-reveal="form">
+        <label class="field field--name">
+          <span class="field__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-3.6 3.8-6 7.5-6s6.7 2.4 7.5 6"/></svg></span>
+          <input type="text" name="name" placeholder="שם" autocomplete="name" required>
+        </label>
+        <label class="field field--phone">
+          <span class="field__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.3 3.6 6 3.2c-1 0-2.6 1.4-2.6 2.8 0 7.7 6.9 14.6 14.6 14.6 1.4 0 2.8-1.6 2.8-2.6l-.4-2.3-3.9-1.3-1.8 1.8c-2.6-1.2-4.9-3.5-6.1-6.1l1.8-1.8-1.3-3.9Z"/></svg></span>
+          <input type="tel" name="phone" placeholder="טלפון" autocomplete="tel" inputmode="tel" required>
+        </label>
+        <label class="field field--mail">
+          <span class="field__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 6.5 8.2 6.3 8.2-6.3"/></svg></span>
+          <input type="email" name="email" placeholder="מייל" autocomplete="email">
+        </label>
+        <label class="field field--msg">
+          <span class="field__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4V6a2 2 0 0 1 1-2Z"/><path d="M8.5 9h7M8.5 12.5h4"/></svg></span>
+          <textarea name="message" placeholder="הודעה" rows="4"></textarea>
+          <span class="field__grip" aria-hidden="true"></span>
+        </label>
+        <button class="btn btn--primary form__send magnetic" type="submit">
+          <span class="btn__label">שלחו לי הודעה</span>
+          <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
+        </button>
+        <p class="form__msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- ============ LET'S TALK ============ -->
+    <section class="talk" id="talk">
+      <div class="talk__script" data-reveal="talk" aria-hidden="true"><picture><source media="(max-width: 1023.98px)" srcset="assets/img/lets-talk-m.webp"><img src="assets/img/lets-talk.webp" alt="" width="1490" height="740" loading="lazy"></picture></div>
+      <div class="talk__media" data-reveal>
+        <div class="talk__video"><button class="talk__play" type="button" aria-label="הפעלת הסרטון"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button><video src="assets/video/status.mp4" poster="assets/video/status-poster.jpg" controls playsinline preload="none" aria-label="הסטטוסים של יאמי"></video></div>
+        <div class="talk__follow">
+          <a class="btn btn--primary talk__wa magnetic" href="https://wa.me/972548481638?text=%D7%94%D7%99%D7%99%20%D7%99%D7%90%D7%9E%D7%99%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8.%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%A2%D7%A7%D7%95%D7%91%20%D7%90%D7%97%D7%A8%D7%99%D7%99%D7%9A%3F%20%D7%A9%D7%9E%D7%99%20%D7%94%D7%95%D7%90%3A" target="_blank" rel="noopener">
+            <span class="btn__label">פתחי הודעה בוואטסאפ</span>
+            <span class="btn__arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></span>
+          </a>
+          <h2 class="talk__hint"><span class="line">כל הפוסטים עולים</span><span class="line">בזמן אמת בסטטוס שלי.</span><span class="line">רוצה לעקוב אחריי?</span><span class="line lime">מעניין שם<i class="dot dot--red">.</i></span></h2>
+        </div>
+      </div>
+    </section>
+
+
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
