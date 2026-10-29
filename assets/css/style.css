@@ -1488,3 +1488,11 @@ html.deck-locked { overscroll-behavior: none; }
 .post__cta { margin: 34px 0 0; font-size: 18px; } .post__cta a { color: #b9a2ff; text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 1023.98px) { .blog__grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 640px) { .blog { padding-top: 110px; } .blog__title { font-size: 44px; } .blog__grid { grid-template-columns: 1fr; } }
+
+/* round 16 – coffee loop paced exactly like the flipping pictures (a change every 4.2s, first at 1s) */
+.about__loop span { animation: loopTurn3 12.6s cubic-bezier(.22, 1, .36, 1) infinite; animation-play-state: paused; }
+.about__art.is-in .about__loop span { animation-play-state: running; }
+.about__loop span:nth-child(1) { animation-delay: 1s; }
+.about__loop span:nth-child(2) { animation-delay: 5.2s; }
+.about__loop span:nth-child(3) { animation-delay: 9.4s; }
+@keyframes loopTurn3 { 0% { opacity: 0; transform: translateY(18px) scale(.95); filter: blur(7px); } 3%, 30% { opacity: 1; transform: none; filter: blur(.4px); } 33.3%, 100% { opacity: 0; transform: translateY(-10px) scale(1.02); filter: blur(6px); } }
