@@ -1477,7 +1477,7 @@ html.deck-locked { overscroll-behavior: none; }
 .post__body { font-size: 17px; line-height: 1.8; }
 .post__body b, .post__body strong { font-weight: 900; }
 .post__body a { color: #b9a2ff; text-decoration: underline; text-underline-offset: 3px; }
-.post__img { display: block; max-width: 100%; height: auto; margin: 18px auto; border-radius: 14px; box-shadow: 0 0 28px rgba(110, 50, 240, .25); }
+.post__img { display: block; width: 100%; max-width: 100%; height: auto; margin: 18px auto; border-radius: 14px; box-shadow: 0 0 28px rgba(110, 50, 240, .25); }
 .post__emoji { display: inline-block; width: 1.3em; height: 1.3em; vertical-align: -.25em; }
 .post__video { display: block; width: 100%; max-width: 560px; margin: 18px auto; border-radius: 14px; background: #000; box-shadow: 0 0 28px rgba(110, 50, 240, .25); }
 .post__linkcard { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; padding: 18px 20px; border-radius: 16px; border: 1px solid rgba(160, 120, 255, .35); background: rgba(60, 24, 130, .35); text-decoration: none !important; color: inherit !important; }
@@ -1608,3 +1608,4 @@ html.deck-locked { overscroll-behavior: none; }
 /* big headings inside posts: brand blue-purple gradient */
 .post__body span[style*="1.47em"] { background: linear-gradient(100deg, #2f5bff 0%, #6a3df5 55%, #a02cf2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .post__body span[style*="1.47em"] b { -webkit-text-fill-color: transparent; }
+.post__body .post__img { width: 100%; }
