@@ -1601,3 +1601,6 @@ html.deck-locked { overscroll-behavior: none; }
 /* blog cards: same scroll-driven 3D entrance as the project heroes */
 .bcard__frame { transform: perspective(1300px) rotateX(calc(var(--rx, 0deg) + var(--st, 0deg))) rotateY(calc(var(--ry, 0deg) + var(--sy, 0deg))) scale(var(--ss, 1)) translateZ(0); transform-origin: 50% 60%; opacity: var(--so, 1); will-change: transform, opacity; }
 @media (prefers-reduced-motion: reduce) { .bcard__frame { transform: none; opacity: 1; } }
+
+/* post headings: tight leading so a wrapped heading reads as one paragraph */
+.post__body [style*="font-size"] { line-height: 1.2; }
