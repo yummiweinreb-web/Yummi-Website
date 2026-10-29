@@ -1604,3 +1604,7 @@ html.deck-locked { overscroll-behavior: none; }
 
 /* post headings: tight leading so a wrapped heading reads as one paragraph */
 .post__body [style*="font-size"] { line-height: 1.2; }
+
+/* big headings inside posts: brand blue-purple gradient */
+.post__body span[style*="1.47em"] { background: linear-gradient(100deg, #2f5bff 0%, #6a3df5 55%, #a02cf2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.post__body span[style*="1.47em"] b { -webkit-text-fill-color: transparent; }
