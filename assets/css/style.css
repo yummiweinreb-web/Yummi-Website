@@ -1536,3 +1536,4 @@ html.deck-locked { overscroll-behavior: none; }
 .blog__script .script__pen { display: block; width: 100%; height: auto; }
 .blog__head { min-height: 520px; }
 .blog__bg { display: none; }
+.bcard__num { text-shadow: 0 0 2px #1a0a4a, 0 0 8px #1a0a4a, 0 1px 12px rgba(10,0,40,.9); }
