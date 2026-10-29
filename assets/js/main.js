@@ -453,7 +453,11 @@
   (() => {
     const box = $(".aflip"); if (!box) return;
     const cards = $$(".aflip__card", box), baseA = $(".aflip__base--a", box), baseB = $(".aflip__base--b", box);
-    const imgs = [1, 2, 3].map(i => `assets/img/about-flip-${i}.webp`);
+    /* order follows the words: Coffee (cup) -> Work (laptop) -> Repeat (thumb) */
+    const imgs = [3, 2, 1].map(i => `assets/img/about-flip-${i}.webp`);
+    const words = $$(".about__loop span");
+    const showWord = (i, prev) => { words.forEach((w, k) => { w.classList.toggle("on", k === i); w.classList.toggle("out", k === prev && k !== i); }); };
+    showWord(0, -1);
     imgs.forEach(u => { const im = new Image(); im.src = u; });
     /* panel outlines (x, y in the 1100x848 artwork) - the three glass panels sit in the same place in every picture */
     const PANELS = [
@@ -479,9 +483,11 @@
         o.ang += (k % 2 ? -180 : 180);
         o.c.style.transform = `rotateY(${o.ang}deg)`;
       }, [0, 340, 170][k]));
+      showWord(next, idx);
       idx = next;
     };
-    const start = () => { if (running || reduce) return; running = true; first = setTimeout(cycle, 1000); timer = setInterval(cycle, 4200); };
+    const PERIOD = 3400;   /* one word + one picture per beat */
+    const start = () => { if (running || reduce) return; running = true; first = setTimeout(() => { cycle(); timer = setInterval(cycle, PERIOD); }, PERIOD); };
     const stop = () => { running = false; clearTimeout(first); clearInterval(timer); };
     if ("IntersectionObserver" in window) new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? start() : stop()), { threshold: .3 }).observe(box);
     else start();
@@ -570,6 +576,13 @@
         const k = Math.max(-1.4, Math.min(1.4, mid));
         const depth = (i % 2 ? 1 : .55);
         c.style.setProperty("--py", (k * -46 * depth).toFixed(1) + "px");
+        /* hero-style entrance: the picture tilts back in 3D, then flattens and grows as it reaches the middle (same as the project screens) */
+        const f = c.firstElementChild, fr = f.getBoundingClientRect();
+        const d = Math.max(-1, Math.min(1, ((fr.top + fr.height / 2) - vh * .52) / (vh * .62))), a = Math.abs(d), e = a * a;
+        f.style.setProperty("--st", (d > 0 ? d * 46 : d * 24).toFixed(2) + "deg");
+        f.style.setProperty("--sy", (d * 22).toFixed(1) + "deg");
+        f.style.setProperty("--ss", (1 - e * .2).toFixed(3));
+        f.style.setProperty("--so", Math.max(0, Math.min(1, 1.35 - a * 1.1)).toFixed(3));
         const rot = parseFloat(base.get(c)) || 0;
         c.style.setProperty("--rot", (rot * Math.min(1, Math.abs(k) * 1.4 + .25)).toFixed(2) + "deg");   // straightens up when it reaches the middle
       });
