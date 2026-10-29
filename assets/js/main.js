@@ -392,6 +392,7 @@
       me: `<path class="ink" pathLength="1" d="M12.1 3.6c4.6-.2 8.3 3.1 8.2 7.8-.1 4.6-3.6 8-8.3 8-4.5 0-8-3.4-7.9-8 .1-4.6 3.4-7.7 8-7.8Z"/><path class="ink" pathLength="1" d="M8.4 14.3c1.9 2.2 5.2 2.3 7.2.1"/><path class="pop" d="M8.7 9.4c.1.8.1 1.3 0 1.9M15.4 9.3c.1.8.1 1.3 0 1.9"/><path class="ink" pathLength="1" d="M19.6 3.2c.2.9.5 1.2 1.4 1.4-.9.2-1.2.5-1.4 1.4-.2-.9-.5-1.2-1.4-1.4.9-.2 1.2-.5 1.4-1.4Z"/>`,
       wand: `<path class="ink" pathLength="1" d="M4.2 19.8c3.4-3.5 7-7.1 10.4-10.6"/><path class="pop" d="M14.2 9.6l1.9 1.9"/><path class="ink" pathLength="1" d="M16.6 3.4c.5 2 1.1 2.6 3.1 3.1-2 .5-2.6 1.1-3.1 3.1-.5-2-1.1-2.6-3.1-3.1 2-.5 2.6-1.1 3.1-3.1Z"/><path class="ink" pathLength="1" d="M18.9 14.1c.2.8.5 1.1 1.3 1.3-.8.2-1.1.5-1.3 1.3-.2-.8-.5-1.1-1.3-1.3.8-.2 1.1-.5 1.3-1.3ZM7.2 4.6c.2.8.5 1.1 1.3 1.3-.8.2-1.1.5-1.3 1.3-.2-.8-.5-1.1-1.3-1.3.8-.2 1.1-.5 1.3-1.3Z"/>`,
       work: `<path class="ink" pathLength="1" d="M12.3 3.8c5 .1 8.7 3.3 8.5 7.4-.2 3.1-2.6 3.8-4.5 3.4-1.9-.4-3 .9-2.5 2.5.6 2-.6 3.2-2.3 3.2C6.4 20.3 3 16.8 3.2 12 3.4 7.6 7.2 3.7 12.3 3.8Z"/><path class="pop" d="M7.6 11.3c.1.8 0 1.3-.2 1.8M10.6 7.7c.1.8 0 1.3-.2 1.8M15.1 8c.1.8 0 1.3-.2 1.8"/>`,
+      blog: `<path class="ink" pathLength="1" d="M5.6 4.4c3.700-.3 8.200-.3 11.500.1.4 4.600.4 10.200.1 15.100-3.400.4-7.700.4-11.600 0-.3-5-.3-10.500 0-15.200Z"/><path class="pop" d="M8.800 9c1.800-.2 3.500-.2 5.200 0M8.800 12.400c1.800-.2 3.500-.2 5.200 0M8.800 15.800c1.200-.1 2.300-.1 3.400 0"/><path class="ink" pathLength="1" d="M18.700 6.600c.6 3.900.5 8 0 12.100"/>`,
       chat: `<path class="ink" pathLength="1" d="M4.2 11.6C4 7.6 7.4 4.4 12 4.4s8.1 3.1 7.9 7.2c-.2 4-3.6 6.7-8 6.6-1 0-1.9-.1-2.7-.4-1.2 1-2.6 1.8-4.2 2.2.6-1.1 1-2.1 1-3.1-1.2-1.2-1.8-3.2-1.8-5.3Z"/><path class="pop" d="M12 14.3c-2.5-1.6-3.7-2.8-3.4-4.3.3-1.4 2.4-1.7 3.4-.3 1-1.4 3.1-1.1 3.4.3.3 1.5-.9 2.7-3.4 4.3Z"/>`
     };
     const items = [
@@ -399,6 +400,7 @@
       { n: "me", t: "מה זה יאמי?", h: base + "#about", ids: ["about"] },
       { n: "wand", t: "שרביט הקסם שלי", h: base + "#process", ids: ["process"] },
       { n: "work", t: "עבודות עם אופי", h: "work.html", ids: ["work"] },
+      { n: "blog", t: "בלוג", h: "blog.html", ids: ["blog"] },
       { n: "chat", t: "בואו נדבר", h: (isHome ? "" : "index.html") + "#contact", ids: ["contact", "talk"], cta: true }
     ];
     const nav = document.createElement("nav");
@@ -407,7 +409,7 @@
       `<li style="--i:${i}"><a href="${it.h}" class="${it.cta ? "is-cta" : ""}" data-i="${i}"><span class="sidenav__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none">${ICONS[it.n]}</svg></span><span class="sidenav__label">${it.t}${it.cta ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>' : ""}</span></a></li>`).join("") + "</ul>";
     document.body.appendChild(nav);
     const links = $$("a", nav), fill = $(".sidenav__line i", nav);
-    const onWorkPage = /work\.html/.test(location.pathname);
+    const onWorkPage = /work\.html/.test(location.pathname), onBlogPage = /blog/.test(location.pathname);
     const set = idx => {
       links.forEach((a, k) => { a.classList.toggle("is-active", k === idx); a.classList.toggle("is-done", idx >= 0 && k < idx); });
       const mid = a => a.parentElement.offsetTop + a.parentElement.offsetHeight / 2;
@@ -417,7 +419,7 @@
     let cur = -2;
     const spy = () => {
       let idx = -1;
-      if (!isHome) idx = onWorkPage ? 3 : -1;
+      if (!isHome) idx = onWorkPage ? 3 : onBlogPage ? 4 : -1;
       else {
         const line = innerHeight * .45;
         items.forEach((it, k) => it.ids.forEach(id => { const e = document.getElementById(id); if (e && e.getBoundingClientRect().top <= line) idx = k; }));
