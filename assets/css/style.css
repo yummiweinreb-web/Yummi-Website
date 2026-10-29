@@ -1531,3 +1531,8 @@ html.deck-locked { overscroll-behavior: none; }
 }
 @media (prefers-reduced-motion: reduce) { .bcard { opacity: 1; transform: none; } .blog__row { transform: none !important; } }
 .blog { width: 100vw; margin-inline: calc(50% - 50vw); }
+/* blog head: script subtitle like the other sections */
+.blog__script { position: relative; width: min(440px, 78vw); margin: 0 auto -6px; translate: 0; opacity: .9; mix-blend-mode: screen; }
+.blog__script .script__pen { display: block; width: 100%; height: auto; }
+.blog__head { min-height: 520px; }
+.blog__bg { display: none; }

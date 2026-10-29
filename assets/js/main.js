@@ -25,7 +25,7 @@
   /* ------- script titles: Allison word + hand-drawn flourish ------- */
   const NS = "http://www.w3.org/2000/svg";
   const scripts = $$("[data-script]");
-  const SCRIPT_IMG = { "Websites": "websites", "About me": "about", "The process": "process", "Selected work": "work" };
+  const SCRIPT_IMG = { "Websites": "websites", "About me": "about", "The process": "process", "Selected work": "work", "Slices of life": "slices" };
   /* hand-lettered neon titles: the picture is revealed along the strokes (pen time map), like writing it by hand */
   scripts.forEach(el => {
     const name = SCRIPT_IMG[el.dataset.script]; if (!name) return;
