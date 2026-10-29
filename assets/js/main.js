@@ -545,6 +545,39 @@
     if (window.ResizeObserver) new ResizeObserver(measure).observe(pin);
   })();
 
+  /* ------- blog archive: tilted card wall – scroll parallax, settling tilt, pointer tilt, drifting giant words ------- */
+  (() => {
+    const grid = $(".blog__grid"); if (!grid) return;
+    const cards = $$(".bcard", grid), rows = $$(".blog__row"), head = $(".blog__head");
+    const reduce2 = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("is-in"); io2.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px", threshold: .05 });
+    cards.forEach((c, i) => { c.style.transitionDelay = ((i % 2) * .12) + "s"; io2.observe(c); });
+    if (reduce2) return;
+    const base = new Map(cards.map(c => [c, getComputedStyle(c).getPropertyValue("--rot")]));
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const vh = innerHeight, y = scrollY;
+      rows.forEach(r => { const d = +r.dataset.dir || 1; r.style.setProperty("--bx", (d * (y * .35) - d * 120).toFixed(1) + "px"); });
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect(), mid = (r.top + r.height / 2 - vh / 2) / vh;   // -1..1 around the viewport centre
+        const k = Math.max(-1.4, Math.min(1.4, mid));
+        const depth = (i % 2 ? 1 : .55);
+        c.style.setProperty("--py", (k * -46 * depth).toFixed(1) + "px");
+        const rot = parseFloat(base.get(c)) || 0;
+        c.style.setProperty("--rot", (rot * Math.min(1, Math.abs(k) * 1.4 + .25)).toFixed(2) + "deg");   // straightens up when it reaches the middle
+      });
+    };
+    const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    addEventListener("scroll", req, { passive: true }); addEventListener("resize", req); update();
+    /* pointer tilt on the picture */
+    cards.forEach(c => {
+      const f = $(".bcard__frame", c);
+      c.addEventListener("pointermove", e => { const r = f.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; f.style.setProperty("--ry", (x * 12).toFixed(1) + "deg"); f.style.setProperty("--rx", (-y * 10).toFixed(1) + "deg"); });
+      c.addEventListener("pointerleave", () => { f.style.setProperty("--ry", "0deg"); f.style.setProperty("--rx", "0deg"); });
+    });
+  })();
+
   /* ------- nav: scrolled state, hide on scroll down, active link squiggle ------- */
   const nav = $("#nav");
   const links = $$(".nav__links a");
