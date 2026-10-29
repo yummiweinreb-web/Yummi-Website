@@ -10,6 +10,12 @@
   const body = document.body;
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+
+  /* every page opens at its very top (no browser scroll restoration / no half-way landing) */
+  try { history.scrollRestoration = "manual"; } catch (e) {}
+  const toTop = () => { if (!location.hash) { scrollTo(0, 0); root.scrollTop = 0; body.scrollTop = 0; } };
+  toTop(); addEventListener("load", () => { toTop(); setTimeout(toTop, 60); });
+  addEventListener("pageshow", e => { if (e.persisted) toTop(); });
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isDesktop = () => innerWidth >= 1024;
@@ -547,7 +553,7 @@
 
   /* ------- blog archive: tilted card wall – scroll parallax, settling tilt, pointer tilt, drifting giant words ------- */
   (() => {
-    const grid = $(".blog__grid"); if (!grid) return;
+    const grid = $(".blog__grid, .hb__grid"); if (!grid) return;
     const cards = $$(".bcard", grid), rows = $$(".blog__row"), head = $(".blog__head");
     const reduce2 = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("is-in"); io2.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px", threshold: .05 });
