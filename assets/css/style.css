@@ -1496,3 +1496,18 @@ html.deck-locked { overscroll-behavior: none; }
 .about__loop span:nth-child(2) { animation-delay: 5.2s; }
 .about__loop span:nth-child(3) { animation-delay: 9.4s; }
 @keyframes loopTurn3 { 0% { opacity: 0; transform: translateY(18px) scale(.95); filter: blur(7px); } 3%, 30% { opacity: 1; transform: none; filter: blur(.4px); } 33.3%, 100% { opacity: 0; transform: translateY(-10px) scale(1.02); filter: blur(6px); } }
+
+/* blog – posts imported from Prog */
+.post__title { font-size: 44px; line-height: 1.15; }
+.post__body { font-size: 17px; line-height: 1.8; }
+.post__body b, .post__body strong { font-weight: 900; }
+.post__body a { color: #b9a2ff; text-decoration: underline; text-underline-offset: 3px; }
+.post__img { display: block; max-width: 100%; height: auto; margin: 18px auto; border-radius: 14px; box-shadow: 0 0 28px rgba(110, 50, 240, .25); }
+.post__emoji { display: inline-block; width: 1.3em; height: 1.3em; vertical-align: -.25em; }
+.post__video { display: block; width: 100%; max-width: 560px; margin: 18px auto; border-radius: 14px; background: #000; box-shadow: 0 0 28px rgba(110, 50, 240, .25); }
+.post__linkcard { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; padding: 18px 20px; border-radius: 16px; border: 1px solid rgba(160, 120, 255, .35); background: rgba(60, 24, 130, .35); text-decoration: none !important; color: inherit !important; }
+.post__linkcard strong { font-size: 19px; color: #fff; } .post__linkcard span { opacity: .8; font-size: 15px; line-height: 1.5; } .post__linkcard em { font-style: normal; font-size: 14px; color: #b9a2ff; direction: ltr; text-align: right; }
+.bcard__thumb { display: block; margin: -28px -26px 6px; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 22px 22px 0 0; background: rgba(60, 24, 130, .5); }
+.bcard__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s var(--ease); }
+.bcard:hover .bcard__thumb img { transform: scale(1.05); }
+@media (max-width: 640px) { .post__title { font-size: 30px; } .post__body { font-size: 16.5px; } }
