@@ -1611,3 +1611,5 @@ html.deck-locked { overscroll-behavior: none; }
 .post__body .post__img { width: 100%; }
 .post__body .post__img.post__img--half { width: 50%; margin: 18px 0 18px auto; }
 .post__body .post__img.post__img--s60 { width: 60%; margin: 18px 0 18px auto; }
+.post__body a.post__headlink { color: inherit; -webkit-text-fill-color: transparent; text-decoration: none; }
+.post__body a.post__headlink:hover { text-decoration: underline; text-underline-offset: 5px; }
