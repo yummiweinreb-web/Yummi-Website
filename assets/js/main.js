@@ -403,7 +403,7 @@
     };
     const items = [
       { n: "home", t: "בית", h: isHome ? "#top" : "index.html", ids: ["top"] },
-      { n: "me", t: "מה זה יאמי?", h: base + "#about", ids: ["about"] },
+      { n: "me", t: "וואלה מה זה יאמי?", h: base + "#about", ids: ["about"] },
       { n: "wand", t: "שרביט הקסם שלי", h: base + "#process", ids: ["process"] },
       { n: "work", t: "עבודות עם אופי", h: "work.html", ids: ["work"] },
       { n: "blog", t: "בלוג", h: "blog.html", ids: ["blog"] },
