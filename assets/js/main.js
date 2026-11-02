@@ -195,7 +195,86 @@
     holder._snake = s; holder.classList.add("snake-on");
     return s;
   }
-  const heroSnake = null; /* hero is a static picture again; snakes no longer animate */
+  /* ------- hero: laptop + background first, then the three neon swirls slither in along their own bodies (WebGL) ------- */
+  function makeHero() {
+    const img = $(".hero__art img");
+    if (!img || reduce) return null;
+    const pic = img.closest("picture"), holder = pic.parentElement;
+    const mob = matchMedia("(max-width: 1023.98px)").matches, sfx = mob ? "-m" : "";
+    const cv = document.createElement("canvas");
+    cv.className = "snake"; cv.width = mob ? 1464 : 1720; cv.height = mob ? 1200 : 1400; cv.setAttribute("aria-hidden", "true");
+    const gl = cv.getContext("webgl", { alpha: false, antialias: false });
+    if (!gl) return null;
+    const sh = (t, src) => { const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return o; };
+    const pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
+    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
+uniform sampler2D pl,pu,re,gr,tm;uniform vec3 p;
+vec3 layer(vec3 c, sampler2D s, float T, float P){
+  vec4 a = texture2D(s, v);
+  float d = P - T;
+  float w = clamp(d / .035, 0., 1.) * a.a;
+  float h = a.a * clamp(d / .012, 0., 1.) * (1. - clamp(d / .10, 0., 1.));   // bright neon head right behind the front
+  c = mix(c, a.rgb, w);
+  return c + a.rgb * .5 * h + vec3(.18) * h * h;
+}
+void main(){
+  vec3 T = texture2D(tm, v).rgb;
+  vec3 c = texture2D(pl, v).rgb;
+  c = layer(c, pu, T.r, p.x);
+  c = layer(c, re, T.g, p.y);
+  c = layer(c, gr, T.b, p.z);
+  gl_FragColor = vec4(c, 1.);
+}`));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    const U = gl.getUniformLocation(pr, "p");
+    const base = "assets/img/hero/";
+    const h = { p: [0, 0, 0], started: false };
+    const draw = () => { gl.uniform3f(U, h.p[0], h.p[1], h.p[2]); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+    const names = ["pl", "pu", "re", "gr", "tm"], files = ["plate" + sfx + ".webp", "pur" + sfx + ".webp", "red" + sfx + ".webp", "grn" + sfx + ".webp", "times" + sfx + ".png"];
+    h.ready = Promise.all(files.map(f => loadImg(base + f))).then(ims => {
+      names.forEach((n, i) => {
+        gl.activeTexture(gl.TEXTURE0 + i);
+        const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+        const fm = (i === 0 || i === 4) ? gl.RGB : gl.RGBA;
+        gl.texImage2D(gl.TEXTURE_2D, 0, fm, fm, gl.UNSIGNED_BYTE, ims[i]);
+        [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+        gl.uniform1i(gl.getUniformLocation(pr, n), i);
+      });
+      gl.viewport(0, 0, cv.width, cv.height);
+      const hp = new URLSearchParams(location.search).get("hp"); if (hp !== null) { h.started = true; h.p = [+hp, +hp, +hp]; }
+      draw();
+      pic.after(cv); pic.style.display = "none";
+    }).catch(() => { h.failed = true; });
+    // purple: left -> right, red: right -> left, green: left -> right (staggered)
+    const SEG = [[0, 3900], [1500, 3700], [3100, 2500]];
+    const ez = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    h.play = (delay = 0) => {
+      if (h.started) return; h.started = true;
+      h.ready.then(() => {
+        if (h.failed) return;
+        const t0 = performance.now() + delay * 1000;
+        const tick = now => {
+          let done = true;
+          SEG.forEach(([st, du], i) => {
+            const k = Math.min(1, Math.max(0, (now - t0 - st) / du));
+            h.p[i] = ez(k) * 1.12; if (k < 1) done = false;
+          });
+          draw();
+          if (!done) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    };
+    snakeReady.push(h.ready);
+    return h;
+  }
+  const heroSnake = makeHero();
 
   /* ------- script titles: scribbled in, stroke by stroke ------- */
   function scribbleLayout() {
