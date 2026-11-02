@@ -1639,3 +1639,13 @@ html.deck-locked { overscroll-behavior: none; }
   .sidenav a.is-active .sidenav__label { color: #fff; font-weight: 500; }
   .sidenav a:hover .sidenav__label { color: var(--lime); }
 }
+
+/* CTA label keeps its button look (padding + gradient) */
+@media (min-width: 1024px) {
+  .sidenav a.is-cta .sidenav__label, .sidenav a.is-cta:hover .sidenav__label {
+    padding: 9px 18px; border-radius: 999px; right: 54px; color: #fff; font-weight: 500; text-shadow: none;
+    background: linear-gradient(90deg, #4a1cf2, #6234ff);
+    box-shadow: 0 0 0 1px rgba(190, 170, 255, .5) inset, 0 0 18px rgba(98, 30, 255, .5);
+  }
+  .sidenav a.is-cta:hover .sidenav__label { background: linear-gradient(90deg, #ff4fae, #7a38ff); }
+}
