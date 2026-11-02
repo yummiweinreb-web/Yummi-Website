@@ -274,7 +274,7 @@ void main(){
     snakeReady.push(h.ready);
     return h;
   }
-  const heroSnake = makeHero();
+  const heroSnake = null; /* hero is the static picture (swirl animation parked: makeHero() above) */
 
   /* ------- script titles: scribbled in, stroke by stroke ------- */
   function scribbleLayout() {
