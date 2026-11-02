@@ -1628,3 +1628,14 @@ html.deck-locked { overscroll-behavior: none; }
   .sidenav a.is-active .sidenav__label { color: #fff; }
   .sidenav a:hover .sidenav__label { color: var(--lime); }
 }
+
+/* side menu labels: lighter weight, subtler */
+@media (min-width: 1024px) {
+  .sidenav__label, .sidenav.is-open .sidenav__label, .sidenav:hover .sidenav__label,
+  .sidenav a:hover .sidenav__label, .sidenav a.is-cta .sidenav__label {
+    font-weight: 400; font-size: 13.5px; color: rgba(255, 255, 255, .78);
+    text-shadow: 0 1px 6px rgba(5, 1, 15, .8);
+  }
+  .sidenav a.is-active .sidenav__label { color: #fff; font-weight: 500; }
+  .sidenav a:hover .sidenav__label { color: var(--lime); }
+}
