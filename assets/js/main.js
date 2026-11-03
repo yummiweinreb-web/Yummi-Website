@@ -209,7 +209,7 @@
     const base = "assets/img/hero/";
     // [name, x, y, w, h] in the 1720x1400 art space
     const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [1013, 706, 172, 130] };
-    const order = ["yummi", "purple", "laptop", "red", "green", "frame"];
+    const order = ["yummi", "laptop", "purple", "red", "green", "frame"];
     const file = { yummi: "yummi", laptop: "laptop", frame: "laptop-frame", purple: "purple", red: "red", green: "green" };
     const h = { started: false, st: { yummi: 0, laptop: 0, frame: 0, purple: [0, 0], red: [0, 0], green: [0, 0] } };
     const gl = cv.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false });
@@ -234,9 +234,9 @@ void main(){
     vec4 q=texture2D(m,v); float s=q.r, dn=q.g*2.;
     float d=hd-s;                                   // distance behind the head
     float cap=sqrt(clamp(1.-pow(1.-clamp(d/.035,0.,1.),2.),0.,1.));
-    float w=mix(.16,1.,clamp(1.-d/.14,0.,1.)); w=mix(w,3.,sw)*cap;
+    float w=mix(1.15*cap,3.,smoothstep(.035,.06,d));   // whole body at full width, round head
     a=smoothstep(w+.07,w-.03,dn)*step(0.,d);
-    float g=exp(-max(d,0.)/.035)*(1.-sw*.6);
+    float g=exp(-max(d,0.)/.035);
     c.rgb+=c.a*(c.rgb*1.3+vec3(.28))*g;             // hot neon head
   }
   gl_FragColor=c*(a*op);
@@ -297,11 +297,11 @@ void main(){
     const ez = t => 1 - Math.pow(1 - t, 3), eio = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, sm = t => t * t * (3 - 2 * t);
     const cl = t => Math.min(1, Math.max(0, t));
     // times in ms from play(): [start, duration]; purple L->R, red R->L, green L->R
-    const IN = [0, 1200], SW = { purple: [1500, 3400], red: [2300, 3000], green: [3400, 1900] };
+    const IN = [0, 1200], SW = { purple: [1500, 3200], red: [2300, 2900], green: [3400, 1800] };
     const setAt = t => {
       const S = h.st; S.yummi = S.laptop = S.frame = ez(cl((t - IN[0]) / IN[1]));
       for (const n in SW) { const k = cl((t - SW[n][0]) / SW[n][1]);
-        S[n] = [eio(cl(k / .82)) * 1.06 + (k > 0 ? .0001 : 0), sm(cl((k - .6) / .4))]; if (k >= 1) S[n] = [1.2, 1]; }
+        S[n] = [eio(k) * 1.1 + (k > 0 ? .0001 : 0), 1]; if (k >= 1) S[n] = [1.3, 1]; }
       return t >= SW.green[0] + SW.green[1] && t >= SW.purple[0] + SW.purple[1];
     };
     h.show = () => { h.ready.then(() => { setAt(1e6); draw(); }); };
