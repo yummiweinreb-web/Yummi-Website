@@ -299,7 +299,7 @@ void main(){
     const ez = t => 1 - Math.pow(1 - t, 3), eio = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, sm = t => t * t * (3 - 2 * t);
     const cl = t => Math.min(1, Math.max(0, t));
     // times in ms from play(): [start, duration]; purple L->R, red R->L, green L->R
-    const IN = [0, 1200], SW = { purple: [1000, 3200], red: [1700, 2900], green: [2800, 1800] };
+    const IN = [0, 1200], SW = { purple: [450, 3200], red: [1150, 2900], green: [2250, 1800] };
     const setAt = t => {
       const S = h.st; S.yummi = S.laptop = S.frame = ez(cl((t - IN[0]) / IN[1]));
       S.strip = S.laptop * (1 - sm(cl(((t - SW.purple[0]) / SW.purple[1] - .5) / .25)));
