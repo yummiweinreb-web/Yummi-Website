@@ -1656,3 +1656,18 @@ html.deck-locked { overscroll-behavior: none; }
 
 /* blog cards: the entrance starts before the card scrolls into view, so it never sits low waiting */
 .bcard.is-in { transition: opacity .7s var(--ease), transform .9s var(--ease); }
+
+/* hero composition: the laptop group and the stage are two objects - the stage is anchored so its floor line always sits at the same place under the laptop, at any screen size */
+.hero {
+  --hz: calc(511 * var(--a));                                   /* where the floor line must cross the laptop (px from hero top) */
+  --hh: calc(700 * var(--a));
+  --bgh: max(calc(var(--vw) * 2 / 3), calc((var(--hh) * .92 - var(--hz)) / .21), calc(var(--hz) / .79));
+}
+@media (max-width: 1023.98px) {
+  .hero { --hz: calc(385.5 * var(--n)); --hh: calc(600 * var(--n)); }
+}
+.hero::before {
+  background-size: calc(var(--bgh) * 1.5) auto !important;
+  background-position: 50% calc(var(--hz) - .79 * var(--bgh)) !important;
+  background-color: #050110;
+}
