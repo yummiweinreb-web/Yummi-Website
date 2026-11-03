@@ -195,86 +195,130 @@
     holder._snake = s; holder.classList.add("snake-on");
     return s;
   }
-  /* ------- hero: laptop + background first, then the three neon swirls slither in along their own bodies (WebGL) ------- */
+  /* ------- hero: stage first; after 1s the laptop + the Yummi word rise in together, then the three neon swirls draw themselves along their paths (WebGL) ------- */
   function makeHero() {
-    const img = $(".hero__art img");
-    if (!img || reduce) return null;
-    const pic = img.closest("picture"), holder = pic.parentElement;
-    const mob = matchMedia("(max-width: 1023.98px)").matches, sfx = mob ? "-m" : "";
+    const holder = $(".hero__art");
+    if (!holder) return null;
+    holder.innerHTML = "";
+    const mob = matchMedia("(max-width: 1023.98px)").matches;
     const cv = document.createElement("canvas");
-    cv.className = "snake"; cv.width = mob ? 1464 : 1720; cv.height = mob ? 1200 : 1400; cv.setAttribute("aria-hidden", "true");
-    const gl = cv.getContext("webgl", { alpha: false, antialias: false });
-    if (!gl) return null;
-    const sh = (t, src) => { const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return o; };
-    const pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
-    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float;varying vec2 v;
-uniform sampler2D pl,pu,re,gr,tm;uniform vec3 p;
-vec3 layer(vec3 c, sampler2D s, float T, float P){
-  vec4 a = texture2D(s, v);
-  float d = P - T;
-  float w = clamp(d / .035, 0., 1.) * a.a;
-  float h = a.a * clamp(d / .012, 0., 1.) * (1. - clamp(d / .10, 0., 1.));   // bright neon head right behind the front
-  c = mix(c, a.rgb, w);
-  return c + a.rgb * .5 * h + vec3(.18) * h * h;
-}
-void main(){
-  vec3 T = texture2D(tm, v).rgb;
-  vec3 c = texture2D(pl, v).rgb;
-  c = layer(c, pu, T.r, p.x);
-  c = layer(c, re, T.g, p.y);
-  c = layer(c, gr, T.b, p.z);
-  gl_FragColor = vec4(c, 1.);
-}`));
-    gl.linkProgram(pr); gl.useProgram(pr);
-    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-    const U = gl.getUniformLocation(pr, "p");
+    cv.className = "snake"; cv.width = mob ? 1464 : 1720; cv.height = mob ? 1200 : 1400;
+    cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Yummi – לפטופ עם צורות ניאון סגולות ואדומות");
+    holder.appendChild(cv);
+    const K = mob ? .71 : 1, OX = mob ? 121 : 0, OY = mob ? 45 : 0;
     const base = "assets/img/hero/";
-    const h = { p: [0, 0, 0], started: false };
-    const draw = () => { gl.uniform3f(U, h.p[0], h.p[1], h.p[2]); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-    const names = ["pl", "pu", "re", "gr", "tm"], files = ["plate" + sfx + ".webp", "pur" + sfx + ".webp", "red" + sfx + ".webp", "grn" + sfx + ".webp", "times" + sfx + ".png"];
-    h.ready = Promise.all(files.map(f => loadImg(base + f))).then(ims => {
-      names.forEach((n, i) => {
-        gl.activeTexture(gl.TEXTURE0 + i);
-        const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
-        const fm = (i === 0 || i === 4) ? gl.RGB : gl.RGBA;
-        gl.texImage2D(gl.TEXTURE_2D, 0, fm, fm, gl.UNSIGNED_BYTE, ims[i]);
+    // [name, x, y, w, h] in the 1720x1400 art space
+    const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [1013, 706, 172, 130] };
+    const order = ["yummi", "purple", "laptop", "red", "green", "frame"];
+    const file = { yummi: "yummi", laptop: "laptop", frame: "laptop-frame", purple: "purple", red: "red", green: "green" };
+    const h = { started: false, st: { yummi: 0, laptop: 0, frame: 0, purple: [0, 0], red: [0, 0], green: [0, 0] } };
+    const gl = cv.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false });
+    const files = order.map(n => loadImg(base + file[n] + ".webp"));
+    const maps = ["purple", "red", "green"].map(n => loadImg(base + n + "-map.png"));
+    let ctx2 = null, ims = null, mps = null;
+    h.ready = Promise.all([Promise.all(files), Promise.all(maps)]).then(([a, m]) => {
+      ims = {}; order.forEach((n, i) => (ims[n] = a[i])); mps = { purple: m[0], red: m[1], green: m[2] };
+      if (gl) initGL(); else ctx2 = cv.getContext("2d");
+    }).catch(() => { h.failed = true; });
+
+    let U, tex = {}, P;
+    function initGL() {
+      const sh = (t, src) => { const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); return o; };
+      P = gl.createProgram();
+      gl.attachShader(P, sh(gl.VERTEX_SHADER, "attribute vec2 a;uniform vec4 r;uniform vec2 cs;uniform vec3 mv;varying vec2 v;void main(){v=a;vec2 c=r.xy+r.zw*.5;vec2 p=(r.xy+r.zw*a-c)*mv.z+c+vec2(0.,mv.y);vec2 q=p/cs*2.-1.;gl_Position=vec4(q.x,-q.y,0.,1.);}"));
+      gl.attachShader(P, sh(gl.FRAGMENT_SHADER, `precision highp float;varying vec2 v;uniform sampler2D t,m;uniform float mode,op,hd,sw;uniform vec3 mv;
+void main(){
+  vec4 c=texture2D(t,v);
+  float a=1.;
+  if(mode>.5){
+    vec4 q=texture2D(m,v); float s=q.r, dn=q.g*2.;
+    float d=hd-s;                                   // distance behind the head
+    float cap=sqrt(clamp(1.-pow(1.-clamp(d/.035,0.,1.),2.),0.,1.));
+    float w=mix(.16,1.,clamp(1.-d/.14,0.,1.)); w=mix(w,3.,sw)*cap;
+    a=smoothstep(w+.07,w-.03,dn)*step(0.,d);
+    float g=exp(-max(d,0.)/.035)*(1.-sw*.6);
+    c.rgb+=c.a*(c.rgb*1.3+vec3(.28))*g;             // hot neon head
+  }
+  gl_FragColor=c*(a*op);
+}`));
+      gl.linkProgram(P); gl.useProgram(P);
+      const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(P, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      const mk = (unit, im, clamp) => {
+        gl.activeTexture(gl.TEXTURE0 + unit); const T = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, T);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
         [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
         [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
-        gl.uniform1i(gl.getUniformLocation(pr, n), i);
-      });
+        return T;
+      };
+      order.forEach(n => (tex[n] = { c: null, im: ims[n] }));
+      U = {}; ["r", "cs", "mv", "t", "m", "mode", "op", "hd", "sw"].forEach(k => (U[k] = gl.getUniformLocation(P, k)));
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.viewport(0, 0, cv.width, cv.height);
-      const hp = new URLSearchParams(location.search).get("hp"); if (hp !== null) { h.started = true; h.p = [+hp, +hp, +hp]; }
-      draw();
-      pic.after(cv); pic.style.display = "none";
-    }).catch(() => { h.failed = true; });
-    // purple: left -> right, red: right -> left, green: left -> right (staggered)
-    const SEG = [[0, 3900], [1500, 3700], [3100, 2500]];
-    const ez = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      h.T = {}; h.M = {};
+      order.forEach(n => { gl.activeTexture(gl.TEXTURE0); const T = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, T);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ims[n]);
+        [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE)); h.T[n] = T; });
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      ["purple", "red", "green"].forEach(n => { gl.activeTexture(gl.TEXTURE1); const T = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, T);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mps[n]);
+        [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE)); h.M[n] = T; });
+      gl.uniform1i(U.t, 0); gl.uniform1i(U.m, 1);
+    }
+    // pop = entrance progress 0..1 for yummi/laptop; swirls: [head, swell]
+    function draw() {
+      if (h.failed) return;
+      const S = h.st;
+      if (!gl) {
+        ctx2.clearRect(0, 0, cv.width, cv.height);
+        order.forEach(n => { const o = S[n]; if (Array.isArray(o) ? o[0] < 1 : o <= 0) return;
+          const r = R[n]; ctx2.drawImage(ims[n], K * r[0] + OX, K * r[1] + OY, K * r[2], K * r[3]); });
+        return;
+      }
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      order.forEach(n => {
+        const o = S[n], sw = Array.isArray(o), r = R[n];
+        if (sw ? o[0] <= 0 : o <= 0) return;
+        const e = sw ? 1 : o, pe = 1 - Math.pow(1 - e, 3);
+        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, h.T[n]);
+        if (sw) { gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, h.M[n]); }
+        gl.uniform4f(U.r, K * r[0] + OX, K * r[1] + OY, K * r[2], K * r[3]);
+        gl.uniform2f(U.cs, cv.width, cv.height);
+        gl.uniform3f(U.mv, 0, sw ? 0 : (1 - pe) * 46 * K, sw ? 1 : (.93 + .07 * pe));
+        gl.uniform1f(U.mode, sw ? 1 : 0); gl.uniform1f(U.op, sw ? 1 : Math.min(1, e * 1.6));
+        gl.uniform1f(U.hd, sw ? o[0] : 0); gl.uniform1f(U.sw, sw ? o[1] : 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      });
+    }
+    const ez = t => 1 - Math.pow(1 - t, 3), eio = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, sm = t => t * t * (3 - 2 * t);
+    const cl = t => Math.min(1, Math.max(0, t));
+    // times in ms from play(): [start, duration]; purple L->R, red R->L, green L->R
+    const IN = [0, 1200], SW = { purple: [1500, 3400], red: [2300, 3000], green: [3400, 1900] };
+    const setAt = t => {
+      const S = h.st; S.yummi = S.laptop = S.frame = ez(cl((t - IN[0]) / IN[1]));
+      for (const n in SW) { const k = cl((t - SW[n][0]) / SW[n][1]);
+        S[n] = [eio(cl(k / .82)) * 1.06 + (k > 0 ? .0001 : 0), sm(cl((k - .6) / .4))]; if (k >= 1) S[n] = [1.2, 1]; }
+      return t >= SW.green[0] + SW.green[1] && t >= SW.purple[0] + SW.purple[1];
+    };
+    h.show = () => { h.ready.then(() => { setAt(1e6); draw(); }); };
     h.play = (delay = 0) => {
       if (h.started) return; h.started = true;
       h.ready.then(() => {
         if (h.failed) return;
         const t0 = performance.now() + delay * 1000;
-        const tick = now => {
-          let done = true;
-          SEG.forEach(([st, du], i) => {
-            const k = Math.min(1, Math.max(0, (now - t0 - st) / du));
-            h.p[i] = ez(k) * 1.12; if (k < 1) done = false;
-          });
-          draw();
-          if (!done) requestAnimationFrame(tick);
-        };
+        const tick = now => { const done = setAt(Math.max(0, now - t0)); draw(); if (!done) requestAnimationFrame(tick); };
         requestAnimationFrame(tick);
       });
     };
+    h.ready.then(() => { const ht = new URLSearchParams(location.search).get("ht"); if (ht !== null) { h.started = true; setAt(+ht); draw(); } else if (!h.started) { setAt(-1); draw(); } });
     snakeReady.push(h.ready);
     return h;
   }
-  const heroSnake = null; /* hero is the static picture (swirl animation parked: makeHero() above) */
+  const heroSnake = makeHero();
 
   /* ------- script titles: scribbled in, stroke by stroke ------- */
   function scribbleLayout() {
@@ -359,8 +403,7 @@ void main(){
   }
 
   /* ------- intro / loader ------- */
-  const heroImg = $(".hero__art img");
-  const imgReady = new Promise(res => (heroImg && !heroImg.complete) ? (heroImg.onload = heroImg.onerror = res) : res());
+  const imgReady = Promise.resolve();
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   const minTime = new Promise(res => setTimeout(res, reduce ? 0 : 1100));
   const failSafe = new Promise(res => setTimeout(res, 4000));
@@ -374,7 +417,7 @@ void main(){
       body.classList.add("is-ready");
       setTimeout(() => $(".hero__script")?.classList.add("is-in"), 350);
       // hero: the page is already there (headline, laptop) - then the snakes slither in
-      setTimeout(() => heroSnake?.play(), reduce ? 0 : 1100);
+      if (reduce) heroSnake?.show(); else setTimeout(() => heroSnake?.play(), 1000);
     }, reduce ? 0 : 250);
   });
 

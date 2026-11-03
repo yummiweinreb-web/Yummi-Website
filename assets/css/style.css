@@ -1646,3 +1646,9 @@ html.deck-locked { overscroll-behavior: none; }
   .contact::before { height: calc(var(--vw) * 700 / 772); background-image: url("../img/maps/tube-plate.webp"); transform: translateX(-50%) scaleX(-1); }
 }
 @media (min-width: 641px) and (max-width: 1023.98px) { .talk { padding-top: 90px; } }
+
+
+/* ---------- hero rebuild: stage picture is the background (instantly), laptop + Yummi + swirls are drawn on top ---------- */
+.hero::before { z-index: 0 !important; background-image: url("../img/hero/stage.webp") !important; background-size: cover !important; background-position: 50% 100% !important; }
+.hero__spot, .hero__floor { display: none !important; }
+.js .hero__art, .is-ready .hero__art { opacity: 1; animation: none; }
