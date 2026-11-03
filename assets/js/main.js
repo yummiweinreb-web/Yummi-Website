@@ -208,8 +208,8 @@
     const K = mob ? .71 : 1, OX = mob ? 121 : 0, OY = mob ? 45 : 0;
     const base = "assets/img/hero/";
     // [name, x, y, w, h] in the 1720x1400 art space
-    const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [1013, 706, 172, 130] };
-    const order = ["yummi", "laptop", "purple", "red", "green", "frame"];
+    const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [985, 706, 172, 130] };
+    const order = ["yummi", "green", "laptop", "purple", "red", "frame"];
     const file = { yummi: "yummi", laptop: "laptop", frame: "laptop-frame", purple: "purple", red: "red", green: "green" };
     const h = { started: false, st: { yummi: 0, laptop: 0, frame: 0, purple: [0, 0], red: [0, 0], green: [0, 0] } };
     const gl = cv.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false });
@@ -235,8 +235,11 @@ void main(){
     float d=hd-s;                                   // distance behind the head
     float cap=sqrt(clamp(1.-pow(1.-clamp(d/.035,0.,1.),2.),0.,1.));
     float w=mix(1.15*cap,3.,smoothstep(.035,.06,d));   // whole body at full width, round head
-    a=smoothstep(w+.07,w-.03,dn)*step(0.,d);
-    float g=exp(-max(d,0.)/.035);
+    // soft, wobbling leading edge that melts into the background
+    float wob=.018*sin(dn*7.+s*90.+hd*40.)+.012*sin(dn*17.-s*210.);
+    float dd=d+wob;
+    a=smoothstep(w+.07,w-.03,dn)*smoothstep(0.,.075,dd);
+    float g=exp(-max(d,0.)/.035)*smoothstep(0.,.03,d);
     c.rgb+=c.a*(c.rgb*1.3+vec3(.28))*g;             // hot neon head
   }
   gl_FragColor=c*(a*op);
