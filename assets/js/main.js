@@ -684,8 +684,8 @@ void main(){
     const grid = $(".blog__grid, .hb__grid"); if (!grid) return;
     const cards = $$(".bcard", grid), rows = $$(".blog__row"), head = $(".blog__head");
     const reduce2 = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("is-in"); setTimeout(() => e.target.classList.add("is-set"), 1500); io2.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px", threshold: .05 });
-    cards.forEach((c, i) => { c.style.transitionDelay = ((i % 2) * .12) + "s"; io2.observe(c); });
+    const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("is-in"); setTimeout(() => e.target.classList.add("is-set"), 1500); io2.unobserve(e.target); } }), { rootMargin: "0px 0px 30% 0px", threshold: 0 });
+    cards.forEach(c => io2.observe(c));
     if (reduce2) return;
     const base = new Map(cards.map(c => [c, getComputedStyle(c).getPropertyValue("--rot")]));
     let ticking = false;

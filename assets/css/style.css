@@ -1652,3 +1652,7 @@ html.deck-locked { overscroll-behavior: none; }
 .hero::before { z-index: 0 !important; background-image: url("../img/hero/stage.webp") !important; background-size: cover !important; background-position: 50% 100% !important; }
 .hero__spot, .hero__floor { display: none !important; }
 .js .hero__art, .is-ready .hero__art { opacity: 1; animation: none; }
+
+
+/* blog cards: the entrance starts before the card scrolls into view, so it never sits low waiting */
+.bcard.is-in { transition: opacity .7s var(--ease), transform .9s var(--ease); }
