@@ -208,10 +208,10 @@
     const K = mob ? .71 : 1, OX = mob ? 121 : 0, OY = mob ? 45 : 0;
     const base = "assets/img/hero/";
     // [name, x, y, w, h] in the 1720x1400 art space
-    const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [985, 706, 172, 130] };
-    const order = ["yummi", "green", "laptop", "purple", "red", "frame"];
-    const file = { yummi: "yummi", laptop: "laptop", frame: "laptop-frame", purple: "purple", red: "red", green: "green" };
-    const h = { started: false, st: { yummi: 0, laptop: 0, frame: 0, purple: [0, 0], red: [0, 0], green: [0, 0] } };
+    const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], strip: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [985, 706, 172, 130] };
+    const order = ["yummi", "green", "laptop", "strip", "purple", "red", "frame"];
+    const file = { yummi: "yummi", laptop: "laptop", frame: "laptop-frame", strip: "laptop-strip", purple: "purple", red: "red", green: "green" };
+    const h = { started: false, st: { yummi: 0, laptop: 0, frame: 0, strip: 0, purple: [0, 0], red: [0, 0], green: [0, 0] } };
     const gl = cv.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false });
     const files = order.map(n => loadImg(base + file[n] + ".webp"));
     const maps = ["purple", "red", "green"].map(n => loadImg(base + n + "-map.png"));
@@ -299,9 +299,10 @@ void main(){
     const ez = t => 1 - Math.pow(1 - t, 3), eio = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, sm = t => t * t * (3 - 2 * t);
     const cl = t => Math.min(1, Math.max(0, t));
     // times in ms from play(): [start, duration]; purple L->R, red R->L, green L->R
-    const IN = [0, 1200], SW = { purple: [1500, 3200], red: [2300, 2900], green: [3400, 1800] };
+    const IN = [0, 1200], SW = { purple: [1000, 3200], red: [1700, 2900], green: [2800, 1800] };
     const setAt = t => {
       const S = h.st; S.yummi = S.laptop = S.frame = ez(cl((t - IN[0]) / IN[1]));
+      S.strip = S.laptop * (1 - sm(cl(((t - SW.purple[0]) / SW.purple[1] - .5) / .25)));
       for (const n in SW) { const k = cl((t - SW[n][0]) / SW[n][1]);
         S[n] = [eio(k) * 1.1 + (k > 0 ? .0001 : 0), 1]; if (k >= 1) S[n] = [1.3, 1]; }
       return t >= SW.green[0] + SW.green[1] && t >= SW.purple[0] + SW.purple[1];
