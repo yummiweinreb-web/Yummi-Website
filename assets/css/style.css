@@ -1671,3 +1671,10 @@ html.deck-locked { overscroll-behavior: none; }
   background-position: 50% calc(var(--hz) - .79 * var(--bgh)) !important;
   background-color: #050110;
 }
+
+/* logo (new artwork) +10% */
+.nav__logo { width: calc(126.5 * var(--a)); }
+@media (min-width: 1024px) { .nav__logo { width: calc(126.5 * var(--a)); } }
+@media (max-width: 1023.98px) { .nav__logo { width: calc(188 * var(--n)); } }
+.footer__logo { width: calc(225.5 * var(--c)); }
+@media (max-width: 1023.98px) { .footer__logo { width: calc(214.5 * var(--q)); } }
