@@ -205,7 +205,7 @@
     cv.className = "snake"; cv.width = mob ? 1464 : 1720; cv.height = mob ? 1200 : 1400;
     cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Yummi – לפטופ עם צורות ניאון סגולות ואדומות");
     holder.appendChild(cv);
-    const K = mob ? .71 : 1, OX = mob ? 121 : 0, OY = mob ? 45 : 0;
+    const K = mob ? .78 : 1, OX = mob ? 61 : 0, OY = mob ? 43 : 0;
     const base = "assets/img/hero/";
     // [name, x, y, w, h] in the 1720x1400 art space
     const R = { yummi: [257, 381, 1206, 284], laptop: [483, 635, 853, 527], frame: [483, 635, 853, 527], strip: [483, 635, 853, 527], purple: [62, 603, 1647, 512], red: [363, 765, 1115, 238], green: [985, 706, 172, 130] };
