@@ -236,10 +236,9 @@ void main(){
     float cap=sqrt(clamp(1.-pow(1.-clamp(d/.035,0.,1.),2.),0.,1.));
     float w=mix(1.15*cap,3.,smoothstep(.035,.06,d));   // whole body at full width, round head
     // soft, wobbling leading edge that melts into the background
-    float wob=.018*sin(dn*7.+s*90.+hd*40.)+.012*sin(dn*17.-s*210.);
-    float dd=d+wob;
-    a=smoothstep(w+.07,w-.03,dn)*smoothstep(0.,.075,dd);
-    float g=exp(-max(d,0.)/.035)*smoothstep(0.,.03,d);
+    float f=smoothstep(0.,.12,d+.015*sin(dn*3.+hd*12.));   // long, smooth melt into the background
+    a=smoothstep(w+.07,w-.03,dn)*f*f*(3.-2.*f);
+    float g=exp(-max(d,0.)/.035)*smoothstep(0.,.05,d);
     c.rgb+=c.a*(c.rgb*1.3+vec3(.28))*g;             // hot neon head
   }
   gl_FragColor=c*(a*op);
