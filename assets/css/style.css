@@ -1931,3 +1931,9 @@ html.deck-locked { overscroll-behavior: none; }
   .nav, .nav.is-scrolled, .nav::before, .nav::after { background: none !important; }
   .sidenav, .sidenav::before, .sidenav::after { background: none !important; }
 }
+@media (max-width: 1023.98px) {
+  .sidenav ul { gap: 9px !important; }
+  .sidenav__dot { width: 30px !important; height: 30px !important; }
+  .sidenav a.is-active .sidenav__dot { transform: scale(1.14) rotate(-4deg); }
+}
+@media (max-width: 380px) { .sidenav { left: 10px !important; } .sidenav ul { gap: 6px !important; } .sidenav__dot { width: 28px !important; height: 28px !important; } .nav__logo { width: 88px !important; right: 16px !important; } }
