@@ -1937,3 +1937,7 @@ html.deck-locked { overscroll-behavior: none; }
   .sidenav a.is-active .sidenav__dot { transform: scale(1.14) rotate(-4deg); }
 }
 @media (max-width: 380px) { .sidenav { left: 10px !important; } .sidenav ul { gap: 6px !important; } .sidenav__dot { width: 28px !important; height: 28px !important; } .nav__logo { width: 88px !important; right: 16px !important; } }
+@media (max-width: 1023.98px) {
+  .hero__ctas { justify-content: center !important; width: 100% !important; }
+  .hero__ctas .btn { min-width: 0 !important; padding-inline: 16px !important; }
+}
