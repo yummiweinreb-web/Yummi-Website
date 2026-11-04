@@ -1881,3 +1881,49 @@ html.deck-locked { overscroll-behavior: none; }
   .hero__ctas .btn .btn__arrow { display: inline-flex !important; align-items: center; width: 16px !important; height: 16px !important; translate: none !important; transform: none !important; inset: auto !important; }
   .hero__ctas .btn .btn__arrow svg { width: 16px; height: 16px; }
 }
+
+/* ================= round 9 (tablet + mobile) ================= */
+@media (max-width: 1023.98px) {
+  /* work: full screen, air between title / deck / button */
+  .work--home { min-height: 100svh; display: flex; align-items: center; }
+  .work--home .work__pin { width: 100%; }
+  .work--home .deck { margin-top: 96px !important; }
+  .work--home .gallery__more { margin-top: 52px !important; }
+
+  /* let's talk to the left, title aligned right */
+  .talk__script { left: calc(113 * var(--q) - 112px) !important; }
+  .contact__title { text-align: right !important; padding-inline-end: 30px; }
+  .contact__title .line { display: block; }
+
+  /* nicer form */
+  .contact { height: calc(975 * var(--q) + 84px) !important; }
+  .form { gap: 14px !important; }
+  .field { height: 56px !important; border-radius: 18px !important; padding-inline: 14px 18px !important; gap: 12px !important;
+    background: linear-gradient(160deg, rgba(60, 24, 150, .38), rgba(14, 4, 48, .62)) !important;
+    box-shadow: 0 0 0 1px rgba(160, 110, 255, .55) inset, 0 8px 22px -10px rgba(110, 50, 255, .7) !important;
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .field:focus-within { box-shadow: 0 0 0 1.5px #b08bff inset, 0 0 24px rgba(130, 70, 255, .65) !important; }
+  .field--msg { height: 120px !important; padding-top: 12px !important; }
+  .field__ico { width: 34px !important; height: 34px !important; padding: 8px; border-radius: 50%; background: linear-gradient(145deg, #5a28ff, #a63cff); box-shadow: 0 4px 12px -3px rgba(110, 50, 255, .8); }
+  .field__ico svg { stroke-width: 1.8; }
+  .field input, .field textarea { font-size: 16px !important; }
+  .field textarea { height: 94px !important; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(255, 255, 255, .8); }
+}
+
+/* send button: brand lime, flat arrow */
+@media (max-width: 1023.98px) {
+  .form .btn.form__send { background: linear-gradient(90deg, #9be600, #b1fb01) !important; color: #120536 !important; box-shadow: 0 0 22px rgba(177, 251, 1, .45) !important; }
+  .form .btn.form__send:hover { background: linear-gradient(90deg, #a9f215, #c4ff3a) !important; }
+  .form .btn.form__send .btn__arrow, .form .btn.form__send .btn__circle { background: none !important; box-shadow: none !important; border-radius: 0 !important; color: #120536 !important; }
+  .form .btn.form__send .btn__arrow svg { stroke: #120536; }
+}
+
+/* one size + weight for every button label */
+@media (max-width: 1023.98px) {
+  .btn, .btn .btn__label, .btn--primary, .btn--ghost, .about__btn, .process__btn, .form .btn.form__send, .talk__wa, .gallery__more .btn, .hero__ctas .btn, .legal__back { font-size: 14px !important; font-weight: 700 !important; letter-spacing: 0 !important; }
+}
+@media (max-width: 1023.98px) {
+  .contact__text { box-sizing: border-box; padding-right: 26px !important; padding-left: 0 !important; }
+  .contact__title { padding-inline: 0 !important; }
+}
