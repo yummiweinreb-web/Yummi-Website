@@ -1958,3 +1958,12 @@ html.deck-locked { overscroll-behavior: none; }
   .step__dot { width: 36px !important; height: 36px !important; margin-bottom: 8px !important; }
   .step__dot svg { width: 20px !important; height: 20px !important; }
 }
+
+/* hero buttons: stacked, clear primary / secondary */
+@media (max-width: 1023.98px) {
+  .hero__ctas { flex-direction: column !important; align-items: center !important; gap: 12px !important; }
+  .hero__ctas .btn { width: 236px !important; height: 44px !important; padding-inline: 20px !important; justify-content: center !important; }
+  .hero__ctas .btn--primary { box-shadow: 0 0 0 1px rgba(255, 255, 255, .25) inset, 0 8px 26px -6px rgba(110, 50, 255, .95) !important; }
+  .hero__ctas .btn--ghost { height: 38px !important; width: 236px !important; background: rgba(255, 255, 255, .07) !important; border: 0 !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, .22) inset !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(255, 255, 255, .88) !important; font-weight: 400 !important; }
+  .hero__ctas .btn--ghost .btn__label { font-weight: 400 !important; }
+}
