@@ -1952,3 +1952,9 @@ html.deck-locked { overscroll-behavior: none; }
   .about__title, .process__title, .work__title, .hblog__title, .contact__title, .talk__hint { font-size: 48px !important; }
 }
 @media (max-width: 1023.98px) { .process { padding-top: calc(216 * var(--n) + 70px) !important; } }
+@media (max-width: 1023.98px) { .nav.is-hidden { transform: translateX(-50%) !important; } }
+@media (max-width: 1023.98px) { .process { margin-top: 177px !important; } }
+@media (max-width: 1023.98px) {
+  .step__dot { width: 36px !important; height: 36px !important; margin-bottom: 8px !important; }
+  .step__dot svg { width: 20px !important; height: 20px !important; }
+}
