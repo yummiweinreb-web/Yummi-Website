@@ -322,6 +322,18 @@ void main(){
     return h;
   }
   const heroSnake = makeHero();
+  /* ------- tablet/mobile: hero fills the screen, its content centred vertically ------- */
+  const heroCentre = () => {
+    const h = $(".hero"), sc = $(".hero__script"), ct = $(".hero__ctas"); if (!h || !sc || !ct) return;
+    if (innerWidth >= 1024) { h.style.removeProperty("--hero-off"); return; }
+    h.style.setProperty("--hero-off", "0px");
+    const hr = h.getBoundingClientRect(), top = sc.getBoundingClientRect().top - hr.top, bottom = ct.getBoundingClientRect().bottom - hr.top;
+    const navH = 64, off = Math.max(0, (hr.height + navH - (bottom - top)) / 2 - top);
+    h.style.setProperty("--hero-off", off.toFixed(1) + "px");
+  };
+  heroCentre(); addEventListener("resize", heroCentre, { passive: true }); addEventListener("orientationchange", () => setTimeout(heroCentre, 250)); addEventListener("load", heroCentre);
+  document.fonts && document.fonts.ready.then(heroCentre);
+
 
   /* ------- script titles: scribbled in, stroke by stroke ------- */
   function scribbleLayout() {
