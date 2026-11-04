@@ -1927,3 +1927,7 @@ html.deck-locked { overscroll-behavior: none; }
   .contact__text { box-sizing: border-box; padding-right: 26px !important; padding-left: 0 !important; }
   .contact__title { padding-inline: 0 !important; }
 }
+@media (max-width: 1023.98px) {
+  .nav, .nav.is-scrolled, .nav::before, .nav::after { background: none !important; }
+  .sidenav, .sidenav::before, .sidenav::after { background: none !important; }
+}
