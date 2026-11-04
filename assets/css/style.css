@@ -1941,3 +1941,14 @@ html.deck-locked { overscroll-behavior: none; }
   .hero__ctas { justify-content: center !important; width: 100% !important; }
   .hero__ctas .btn { min-width: 0 !important; padding-inline: 16px !important; }
 }
+
+/* one heading size for every section title (mobile + tablet) */
+@media (max-width: 1023.98px) {
+  .about__title, .process__title, .work__title, .hblog__title, .contact__title, .talk__hint { font-size: 36px !important; line-height: 1.12 !important; font-weight: 900 !important; }
+  .contact__title { line-height: 1.2 !important; }
+  .process__title .line, .contact__title .line, .talk__hint .line { font-size: inherit !important; line-height: inherit !important; }
+}
+@media (min-width: 641px) and (max-width: 1023.98px) {
+  .about__title, .process__title, .work__title, .hblog__title, .contact__title, .talk__hint { font-size: 48px !important; }
+}
+@media (max-width: 1023.98px) { .process { padding-top: calc(216 * var(--n) + 70px) !important; } }
