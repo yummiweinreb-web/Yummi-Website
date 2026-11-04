@@ -1838,3 +1838,46 @@ html.deck-locked { overscroll-behavior: none; }
   .footer__contact { top: 92px !important; }
   .footer__icons { gap: 44px !important; }
 }
+
+/* ================= round 8 (tablet + mobile) ================= */
+.step__dot svg { display: none; }
+.footer__logo picture, .nav__logo picture { display: block; }
+@media (max-width: 1023.98px) {
+  /* menu: no frame, sits at the top-left in line with the logo */
+  .sidenav { top: 17px; bottom: auto !important; left: 14px; transform: none; padding: 0; border-radius: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+  .sidenav ul { gap: 5px; }
+  .sidenav__dot { width: 31px; height: 31px; }
+  .sidenav__dot svg { width: 17px; height: 17px; }
+  body { padding-bottom: 0 !important; }
+  .wa-float { bottom: 14px !important; }
+  .nav__logo { width: 96px !important; top: 14px !important; }
+
+  /* hero buttons: compact pair, centred */
+  .hero__ctas { gap: 10px !important; padding: 0 !important; }
+  .hero__ctas .btn { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding-inline: 16px !important; }
+  .hero__ctas .btn--primary .btn__arrow { margin-inline-start: 6px !important; }
+
+  /* about -> process: two separate areas */
+  .process { margin-top: 50px; padding-bottom: calc(60 * var(--n) + 44px) !important; }
+
+  /* process: centred, a numbered icon above each title, no connectors */
+  .steps { width: min(86%, 520px) !important; margin: 0 auto !important; align-items: center; gap: 34px; }
+  .step { display: flex !important; flex-direction: column; align-items: center; text-align: center !important; padding-bottom: 0 !important; width: 100% !important; }
+  .step::after { display: none !important; }
+  .step__dot { position: static !important; display: grid !important; place-items: center; width: 46px !important; height: 46px !important; margin: 0 0 10px !important; border-radius: 58% 42% 55% 45% / 48% 56% 44% 52%; background: linear-gradient(145deg, #5a28ff, #a63cff) !important; box-shadow: 0 6px 18px -4px rgba(110, 50, 255, .8) !important; animation: blobMorph 7s ease-in-out infinite !important; }
+  .step:nth-child(3) .step__dot { animation-delay: -2s !important; border-radius: 45% 55% 42% 58% / 55% 45% 56% 44%; }
+  .step:nth-child(5) .step__dot { animation-delay: -4s !important; }
+  .step__dot svg { display: block; width: 26px; height: 26px; overflow: visible; }
+  .step__dot svg .ink { stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .step__title { padding-top: 0 !important; text-align: center; }
+  .step__text { text-align: center !important; }
+}
+@media (max-width: 1023.98px) {
+  .hero__ctas .btn { gap: 8px !important; padding-inline: 20px !important; min-width: 148px; justify-content: center; }
+  .hero__ctas .btn .btn__label { flex: 0 0 auto; white-space: nowrap; }
+  .hero__ctas .btn .btn__arrow { flex: 0 0 auto; position: static !important; margin: 0 !important; }
+}
+@media (max-width: 1023.98px) {
+  .hero__ctas .btn .btn__arrow { display: inline-flex !important; align-items: center; width: 16px !important; height: 16px !important; translate: none !important; transform: none !important; inset: auto !important; }
+  .hero__ctas .btn .btn__arrow svg { width: 16px; height: 16px; }
+}
