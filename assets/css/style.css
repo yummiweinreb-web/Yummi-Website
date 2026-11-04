@@ -2006,3 +2006,33 @@ html.deck-locked { overscroll-behavior: none; }
   .gallery__more .btn { background: linear-gradient(90deg, #4a1cf2, #6234ff) !important; box-shadow: 0 0 0 1px rgba(190, 170, 255, .5) inset, 0 8px 26px -6px rgba(110, 50, 255, .95) !important; }
   .gallery__more .btn::before { display: none !important; }
 }
+
+/* ===== round 10: arrow right after the label everywhere ===== */
+.btn:not(.btn--big), .bcard__more { justify-content: center !important; gap: 10px !important; }
+.btn:not(.btn--big) .btn__label { flex: 0 0 auto !important; text-align: start; }
+.btn:not(.btn--big) .btn__arrow { flex: 0 0 auto; margin: 0 !important; }
+
+@media (max-width: 1023.98px) {
+  /* form: flush with page content edges, more compact */
+  .form { left: 24px !important; right: 24px !important; width: auto !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .field--name, .field--phone { grid-column: auto !important; }
+  .field--name { order: 1 !important; } .field--phone { order: 2 !important; }
+  .field--mail, .field--msg { grid-column: 1 / -1 !important; }
+  .field--mail { order: 3 !important; } .field--msg { order: 4 !important; }
+  .form .btn.form__send { order: 5; grid-column: 1 / -1 !important; justify-self: center; margin-top: 4px; }
+  .form__msg { order: 6; grid-column: 1 / -1; }
+  .field { height: 46px !important; padding-inline: 8px 12px !important; gap: 8px !important; border-radius: 16px !important; }
+  .field--msg { height: 96px !important; padding-top: 8px !important; }
+  .field__ico { width: 28px !important; height: 28px !important; padding: 6px !important; }
+  .field input, .field textarea { font-size: 15px !important; }
+  .field textarea { height: 76px !important; }
+  .contact { height: calc(975 * var(--q) + 20px) !important; }
+
+  /* send button gets the same frame + shine as the other buttons */
+  .form .btn.form__send { box-shadow: 0 0 0 1px rgba(255, 255, 255, .45) inset, 0 8px 26px -6px rgba(177, 251, 1, .75) !important; }
+  .form .btn.form__send:hover { box-shadow: 0 0 0 1px rgba(255, 255, 255, .8) inset, 0 12px 34px -6px rgba(177, 251, 1, .95), 0 0 26px rgba(177, 251, 1, .5) !important; }
+}
+.btn:not(.btn--big) .btn__arrow { position: relative !important; inset: auto !important; translate: none !important; scale: none !important; transform: none !important; width: auto !important; height: auto !important; display: inline-grid !important; }
+.btn:not(.btn--big):hover .btn__arrow { transform: translateX(-5px) !important; }
+.btn:not(.btn--big) .btn__arrow svg { width: 18px !important; height: 18px !important; }
+@media (max-width: 1023.98px) { .btn:not(.btn--big) .btn__arrow svg { width: 16px !important; height: 16px !important; } }
