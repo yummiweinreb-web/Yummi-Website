@@ -2041,3 +2041,11 @@ html.deck-locked { overscroll-behavior: none; }
 @media (min-width: 1024px) {
   .process, .work, .hblog, .contact { margin-top: 100px; }
 }
+
+/* the side menu lives at the right edge: keep page content clear of it on smaller desktops */
+.br-d { display: none; }
+@media (min-width: 1024px) {
+  .br-d { display: inline; }
+  .blog__grid { padding-inline: clamp(24px, 7vw, 110px); }
+  .legal-page.post, .page-work { padding-inline: clamp(24px, 7vw, 110px); box-sizing: border-box; }
+}
