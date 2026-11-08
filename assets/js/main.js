@@ -686,6 +686,7 @@ void main(){
     const PX = 380;                       // wheel pixels per screen
     let pinTop = 0, cur = 0, t = 0, raf = 0, locked = false, lastDy = null, ty = 0;
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const isMobile = () => matchMedia("(max-width: 1023.98px)").matches;   // phones/tablets: no scroll lock, auto slider + arrows instead
     const measure = () => { const vh = innerHeight, ph = pin.offsetHeight; pinTop = ph + 70 <= vh ? (vh - ph) / 2 : Math.min(70, vh - ph); };
     const paint = v => cards.forEach((c, k) => {
       const r = k - v, f = r < 0 ? clamp(-r) : 0, i = Math.max(0, r);
@@ -703,16 +704,17 @@ void main(){
       t = clamp(t + d / PX, 0, steps); kick();
       if ((d > 0 && t >= steps) || (d < 0 && t <= 0)) { cur = t; paint(cur); unlock(); }
     };
-    addEventListener("wheel", e => { if (!locked) return; e.preventDefault(); drive(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
+    addEventListener("wheel", e => { if (!locked || isMobile()) return; e.preventDefault(); drive(e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY); }, { passive: false });
     addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
-    addEventListener("touchmove", e => { if (!locked) return; e.preventDefault(); const y = e.touches[0].clientY; drive((ty - y) * 1.6); ty = y; }, { passive: false });
+    addEventListener("touchmove", e => { if (!locked || isMobile()) return; e.preventDefault(); const y = e.touches[0].clientY; drive((ty - y) * 1.6); ty = y; }, { passive: false });
     addEventListener("keydown", e => {
-      if (!locked) return;
+      if (!locked || isMobile()) return;
       const k = { ArrowDown: 80, PageDown: 400, " ": 400, ArrowUp: -80, PageUp: -400 }[e.key];
       if (k) { e.preventDefault(); drive(k); }
     });
     const watch = () => {
       if (locked) return;
+      if (isMobile()) { lastDy = null; return; }
       const d = dy();
       if (lastDy !== null) {
         if (lastDy > 0 && d <= 0 && t < steps) lock();       // arriving from above
@@ -725,6 +727,25 @@ void main(){
     addEventListener("resize", () => { measure(); });
     addEventListener("load", measure);
     if (window.ResizeObserver) new ResizeObserver(measure).observe(pin);
+
+    /* ---- phones/tablets: the slider plays by itself, stops while touched, and has two arrows ---- */
+    (() => {
+      let paused = false, resumeT = 0, inView = false;
+      const go = dir => {
+        const r = Math.round(t);
+        if (dir > 0) { if (r >= steps) { t = cur = 0; paint(0); } else t = r + 1; }
+        else t = Math.max(0, r - 1);
+        kick();
+      };
+      const hold = ms => { paused = true; clearTimeout(resumeT); resumeT = setTimeout(() => (paused = false), ms); };
+      if ("IntersectionObserver" in window) new IntersectionObserver(es => { inView = es[0].isIntersecting; }, { threshold: .35 }).observe(deck); else inView = true;
+      setInterval(() => { if (isMobile() && inView && !paused && !document.hidden) go(1); }, 2200);
+      deck.addEventListener("touchstart", () => { paused = true; clearTimeout(resumeT); }, { passive: true });
+      ["touchend", "touchcancel"].forEach(ev => deck.addEventListener(ev, () => hold(5000), { passive: true }));
+      const prev = $(".deck__arrow--prev", sec), next = $(".deck__arrow--next", sec);
+      prev && prev.addEventListener("click", () => { hold(6000); go(-1); });
+      next && next.addEventListener("click", () => { hold(6000); go(1); });
+    })();
   })();
 
   /* ------- blog archive: tilted card wall – scroll parallax, settling tilt, pointer tilt, drifting giant words ------- */
