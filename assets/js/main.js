@@ -440,7 +440,7 @@ void main(){
   let lenis = null;
   const startLenis = () => {
     if (reduce || !window.Lenis) return;
-    lenis = new window.Lenis({ duration: 1.15, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true, wheelMultiplier: .95 });
+    lenis = new window.Lenis({ lerp: .085, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.4 });
     const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
     lenis.on("scroll", onScroll);
@@ -762,11 +762,26 @@ void main(){
 
   const progress = $(".progress i");
 
+  let maxScroll = 0, visMedia = new Set();
+  const measure = () => { maxScroll = document.documentElement.scrollHeight - innerHeight; };
+  measure(); addEventListener("load", measure); addEventListener("resize", measure, { passive: true });
+  if ("ResizeObserver" in window) new ResizeObserver(measure).observe(document.body);
+  if ("IntersectionObserver" in window) {
+    const mo = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? visMedia.add(e.target) : visMedia.delete(e.target)), { rootMargin: "60% 0px 60% 0px" });
+    projMedia.forEach(m => mo.observe(m));
+  } else projMedia.forEach(m => visMedia.add(m));
+
   function onScroll() {
     const y = lenis ? lenis.scroll : scrollY;
     const vh = innerHeight;
-    const max = document.documentElement.scrollHeight - vh;
-    progress.style.setProperty("--p", max > 0 ? (y / max).toFixed(4) : 0);
+
+    /* ---- reads first (one layout pass) ---- */
+    const tops = sections.map(s => s ? s.getBoundingClientRect().top : 1e9);
+    const wr = work ? work.getBoundingClientRect() : null;
+    const mr = reduce ? [] : [...visMedia].map(m => [m, m.getBoundingClientRect()]);
+
+    /* ---- then writes ---- */
+    progress.style.setProperty("--p", maxScroll > 0 ? (y / maxScroll).toFixed(4) : 0);
 
     nav.classList.toggle("is-scrolled", y > 40);
     if (!body.classList.contains("menu-open")) {
@@ -777,20 +792,18 @@ void main(){
 
     // active section
     let current = null;
-    sections.forEach((s, i) => { if (s && s.getBoundingClientRect().top < vh * .45) current = links[i]; });
+    tops.forEach((t, i) => { if (t < vh * .45) current = links[i]; });
     if (y < vh * .4) current = null;
     if (current !== activeLink) { activeLink = current; if (!hoverLink) placeSquiggle(activeLink); links.forEach(l => l.classList.toggle("is-active", l === current)); }
 
-    // waves
-    if (work) {
-      const r = work.getBoundingClientRect();
-      const t = Math.min(1, Math.max(0, (vh * .85 - r.top) / (r.height * .9)));
+    // waves (only while the work section is near the viewport)
+    if (wr && wr.bottom > -vh && wr.top < vh * 1.5) {
+      const t = Math.min(1, Math.max(0, (vh * .85 - wr.top) / (wr.height * .9)));
       waves.forEach(p => p.style.strokeDashoffset = (p.dataset.len * (1 - t)).toFixed(1));
     }
 
     // project screens: tilt back in 3D, then flatten and grow as they reach the middle of the window
-    if (!reduce) projMedia.forEach(m => {
-      const r = m.getBoundingClientRect();
+    mr.forEach(([m, r]) => {
       const d = Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh * .52) / (vh * .62)));
       const a = Math.abs(d);
       const e = a * a;
@@ -798,7 +811,7 @@ void main(){
       m.style.setProperty("--sy", (d * 22).toFixed(1) + "deg");
       m.style.setProperty("--ss", (1 - e * .2).toFixed(3));
       m.style.setProperty("--so", Math.max(0, Math.min(1, 1.35 - a * 1.1)).toFixed(3));
-      m.style.setProperty("--sz", ((1 - Math.min(1, a * 1.4)) * 0 + e * .16).toFixed(3));
+      m.style.setProperty("--sz", (e * .16).toFixed(3));
     });
 
     // hero art drifts on scroll
