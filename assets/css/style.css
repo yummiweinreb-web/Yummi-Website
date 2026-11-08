@@ -2036,3 +2036,8 @@ html.deck-locked { overscroll-behavior: none; }
 .btn:not(.btn--big):hover .btn__arrow { transform: translateX(-5px) !important; }
 .btn:not(.btn--big) .btn__arrow svg { width: 18px !important; height: 18px !important; }
 @media (max-width: 1023.98px) { .btn:not(.btn--big) .btn__arrow svg { width: 16px !important; height: 16px !important; } }
+
+/* desktop: more air between areas */
+@media (min-width: 1024px) {
+  .process, .work, .hblog, .contact { margin-top: 100px; }
+}
