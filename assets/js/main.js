@@ -440,10 +440,43 @@ void main(){
   let lenis = null;
   const startLenis = () => {
     if (reduce || !window.Lenis) return;
-    lenis = new window.Lenis({ lerp: .085, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.4 });
+    lenis = new window.Lenis({ lerp: .07, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.4 });
     const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
     lenis.on("scroll", onScroll);
+
+    /* ---- section snapping (desktop, mouse/trackpad): after a scroll settles, glide to the section it was heading to ---- */
+    if (matchMedia("(hover: hover) and (pointer: fine) and (min-width: 1024px)").matches) {
+      const pts = () => [".hero", ".about", ".process", ".work", ".hblog", ".contact", ".talk"].map(q => document.querySelector(q)).filter(Boolean);
+      let idle = 0, last = lenis.scroll, dir = 0, busy = false, anchorNav = false;
+      const settle = () => {
+        if (busy || anchorNav || body.classList.contains("menu-open") || document.documentElement.classList.contains("deck-locked")) return;
+        const y = lenis.scroll, vh = innerHeight, list = pts();
+        const work = document.querySelector(".work");
+        if (work) { // inside the pinned work gallery: leave it alone
+          const t = work.getBoundingClientRect().top + y, b = t + work.offsetHeight;
+          if (y > t + vh * .15 && y < b - vh * 1.15) return;
+        }
+        const tops = list.map(e => Math.round(e.getBoundingClientRect().top + y));
+        const aim = y + dir * vh * .28;
+        let best = null, bd = 1e9;
+        tops.forEach(t => { const d = Math.abs(t - aim); if (d < bd) { bd = d; best = t; } });
+        const maxY = document.documentElement.scrollHeight - vh;
+        if (best === null) return;
+        best = Math.min(best, maxY);
+        if (Math.abs(best - y) < 4 || Math.abs(best - y) > vh * .9) return;
+        busy = true;
+        lenis.scrollTo(best, { duration: 1.1, easing: t => 1 - Math.pow(1 - t, 3), lock: false, onComplete: () => { busy = false; last = lenis.scroll; } });
+      };
+      lenis.on("scroll", ({ scroll }) => {
+        if (busy) return;
+        if (Math.abs(scroll - last) > 0.5) dir = Math.sign(scroll - last) || dir;
+        last = scroll;
+        clearTimeout(idle); idle = setTimeout(settle, 160);
+      });
+      addEventListener("wheel", () => { if (busy) { busy = false; lenis.scrollTo(lenis.scroll, { immediate: true }); } }, { passive: true });
+      document.addEventListener("click", e => { if (e.target.closest && e.target.closest('a[href^="#"]')) { anchorNav = true; setTimeout(() => (anchorNav = false), 1800); } }, true);
+    }
   };
   if (document.readyState === "complete") startLenis(); else addEventListener("load", startLenis);
 
