@@ -2127,3 +2127,36 @@ html.deck-locked { overscroll-behavior: none; }
   .sidenav { padding: 14px 0 !important; }
   .sidenav a::after { width: 64px !important; right: -14px !important; }
 }
+
+/* ================= round 12 ================= */
+.legal__back--in { display: none !important; }
+@media (max-width: 1023.98px) {
+  /* video: no pale pink pulse under the play button */
+  .talk__play::before { display: none !important; }
+
+  /* work page: pink bar under project names, even rhythm (24px) between all elements */
+  .page-work .project__name::after { content: ""; display: block; width: 54px; height: 4px; margin: 10px auto 0; border-radius: 4px; background: linear-gradient(90deg, #ff5a4f, #ff4fae); }
+  .page-work .project__num { margin-bottom: 0 !important; }
+  .page-work .project__name { margin-top: 24px !important; }
+  .page-work .project__tag { margin-top: 24px !important; }
+  .page-work .project__media { margin-top: 24px !important; }
+  .page-work .project__info .btn, .page-work .project > .btn { margin-top: 24px !important; }
+
+  /* Let's talk sits level with "תגידו יאמי" on the inner pages */
+  body:not(:has(.hero)) .talk__script { top: calc(-921 * var(--q) + 24px) !important; }
+
+  /* article: rounded corners + gradient edge at top and bottom, back button inside the sheet */
+  .legal-page.post .post__body { border-radius: 28px !important; padding-bottom: 34px !important; box-shadow: 0 0 0 1px rgba(190, 160, 255, .55), 0 0 40px rgba(120, 60, 255, .35) !important; }
+  .legal-page.post .post__body::before { inset-inline: 28px !important; border-radius: 0 0 6px 6px !important; }
+  .legal-page.post .post__body::after { content: ""; position: absolute; inset-inline: 28px; bottom: 0; height: 5px; border-radius: 6px 6px 0 0; background: linear-gradient(90deg, #3d6cff, #8b2cf5, #ff4fae); }
+  .post__body .legal__back--in { display: inline-flex !important; margin: 34px auto 0 !important; }
+  .post__body { text-align: start; }
+  .post__body .legal__back--in { position: relative; left: 50%; translate: -50% 0; }
+  .legal-page.post > .legal__back, .post > .legal__back:not(.legal__back--in) { display: none !important; }
+}
+@media (max-width: 1023.98px) {
+  .legal__back:not(.legal__back--in) { display: none !important; }
+  .post__body .legal__back--in { display: flex !important; position: static !important; translate: none !important; margin: 34px auto 0 !important; left: auto !important; }
+}
+.post__body a.legal__back--in, .post__body a.legal__back--in .btn__label { color: #fff !important; text-decoration: none !important; }
+.post__body a.legal__back--in svg { stroke: #fff !important; }
