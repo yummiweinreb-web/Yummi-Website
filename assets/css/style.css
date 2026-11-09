@@ -2121,3 +2121,9 @@ html.deck-locked { overscroll-behavior: none; }
   .page-work .project__info .btn, .page-work .project > .btn { order: 5; margin-top: 28px !important; }
 }
 @media (max-width: 1023.98px) { .page-work .work { padding-inline: 0 !important; } .page-work .projects { padding-inline: 14px !important; } }
+
+/* desktop menu: only the icon column triggers the labels, never the page content next to it */
+@media (min-width: 1024px) {
+  .sidenav { padding: 14px 0 !important; }
+  .sidenav a::after { width: 64px !important; right: -14px !important; }
+}
