@@ -482,6 +482,8 @@ void main(){
 
   const scrollToEl = (el) => {
     const off = isDesktop() ? 0 : -64;
+    window.__deckSkip = true; clearTimeout(window.__deckSkipT); window.__deckSkipT = setTimeout(() => (window.__deckSkip = false), 2200);  // anchor jumps fly over the pinned work deck instead of stopping in it
+    window.__deckUnlock && window.__deckUnlock();
     if (lenis) lenis.scrollTo(el, { offset: off, duration: 1.4 });
     else el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   };
@@ -712,7 +714,9 @@ void main(){
       const k = { ArrowDown: 80, PageDown: 400, " ": 400, ArrowUp: -80, PageUp: -400 }[e.key];
       if (k) { e.preventDefault(); drive(k); }
     });
+    window.__deckUnlock = () => { if (locked) { unlock(); } };
     const watch = () => {
+      if (window.__deckSkip) { lastDy = dy(); return; }
       if (locked) return;
       if (isMobile()) { lastDy = null; return; }
       const d = dy();
