@@ -132,3 +132,8 @@ design/
 
 אין במאגר סיסמאות, טוקנים או מפתחות API. `.gitignore` חוסם קובצי `.env`.
 אם יתווספו מפתחות בעתיד (למשל לשירות טפסים), שומרים אותם בהגדרות האחסון או ב-environment variables, ולא בקוד.
+
+## Publishing a new blog post
+1. Create `blog-xxx.html` (copy an existing post), add its images to `assets/img/blog/`.
+2. Add an entry (href, thumb, date YYYY-MM-DD, title, desc) to `tools/posts.json`.
+3. Run `python3 tools/build-blog-index.py` — it re-sorts by date, rebuilds the grid in `blog.html` (numbered) and the 3 newest posts on the home page (4th card = mobile only).
