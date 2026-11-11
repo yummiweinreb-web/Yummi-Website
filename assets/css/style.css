@@ -2160,3 +2160,8 @@ html.deck-locked { overscroll-behavior: none; }
 }
 .post__body a.legal__back--in, .post__body a.legal__back--in .btn__label { color: #fff !important; text-decoration: none !important; }
 .post__body a.legal__back--in svg { stroke: #fff !important; }
+
+/* Work page (desktop): the "Selected work" script is centred over the page title */
+@media (min-width: 1024px) {
+  .page-work .work__head .work__script { left: 50% !important; right: auto !important; translate: -50% -12px !important; }
+}
