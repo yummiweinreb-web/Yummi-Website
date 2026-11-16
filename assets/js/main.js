@@ -16,6 +16,34 @@
   const toTop = () => { if (!location.hash) { scrollTo(0, 0); root.scrollTop = 0; body.scrollTop = 0; } };
   toTop(); addEventListener("load", () => { toTop(); setTimeout(toTop, 60); });
   addEventListener("pageshow", e => { if (e.persisted) toTop(); });
+
+  /* blog list remembers your place: a card click saves the scroll, and the article's "חזרה לבלוג" (or the browser's back) lands you back there instead of at the top */
+  (() => {
+    const K = "blogScroll", isBlog = /\/blog(\.html)?\/?$/;
+    try {
+      if (isBlog.test(location.pathname)) {
+        addEventListener("click", e => { const c = e.target.closest && e.target.closest("a.bcard"); if (c) sessionStorage.setItem(K, String(Math.round(scrollY))); }, true);
+        const nav = performance.getEntriesByType("navigation")[0];
+        const y = parseFloat(sessionStorage.getItem(K) || "");
+        const wanted = sessionStorage.getItem(K + "Back") === "1" || (nav && nav.type === "back_forward");
+        sessionStorage.removeItem(K + "Back");
+        if (y > 0 && wanted) {
+          let moved = false;
+          ["wheel", "touchstart", "keydown", "mousedown"].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, once: true }));
+          const go = () => { if (!moved && Math.abs(scrollY - y) > 2) scrollTo({ top: y, behavior: "instant" }); };
+          addEventListener("load", () => [150, 600, 1400, 2600].forEach(t => setTimeout(go, t)));
+        }
+      } else {
+        addEventListener("click", e => {
+          const a = e.target.closest && e.target.closest("a.legal__back");
+          if (!a || !/blog(\.html)?$/.test(a.getAttribute("href") || "")) return;
+          let fromBlog = false;
+          try { const r = new URL(document.referrer); fromBlog = r.origin === location.origin && isBlog.test(r.pathname); } catch (err) {}
+          if (fromBlog) sessionStorage.setItem(K + "Back", "1"); else sessionStorage.removeItem(K);
+        }, true);
+      }
+    } catch (err) {}
+  })();
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isDesktop = () => innerWidth >= 1024;
