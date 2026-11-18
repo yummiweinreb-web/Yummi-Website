@@ -2176,3 +2176,11 @@ html.deck-locked { overscroll-behavior: none; }
   .project__tags { order: 3; justify-content: center; align-self: center; gap: 8px; margin-top: 18px; }
   .ptag { height: 30px; padding: 0 16px; font-size: 14.5px; }
 }
+
+/* work page round 2: tags use the site palette; info block is vertically centred on the project image */
+.ptag--red { background: var(--red) !important; color: #fff !important; }
+.ptag--violet { background: var(--violet) !important; color: #fff !important; }
+.ptag--green { background: var(--lime) !important; color: #14081f !important; }
+@media (min-width: 1024px) {
+  .project__info { height: calc(266 * var(--b)); padding-top: 0 !important; justify-content: center; box-sizing: border-box; }
+}
