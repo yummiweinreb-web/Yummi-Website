@@ -2165,3 +2165,14 @@ html.deck-locked { overscroll-behavior: none; }
 @media (min-width: 1024px) {
   .page-work .work__head .work__script { left: 50% !important; right: auto !important; translate: -50% -12px !important; }
 }
+
+/* work page: service tags (strategy / design / build) under each project subtitle */
+.project__tags { display: flex; flex-wrap: wrap; direction: rtl; justify-content: flex-end; gap: calc(6 * var(--b)); align-self: stretch; margin-top: calc(12 * var(--b)); }
+.ptag { display: inline-flex; align-items: center; height: calc(22 * var(--b)); padding: 0 calc(10.5 * var(--b)); border-radius: 999px; font-size: calc(11.8 * var(--b)); font-weight: 500; line-height: 1; color: #2c2c36; white-space: nowrap; }
+.ptag--red { background: #f59aa6; }
+.ptag--violet { background: #b997ff; }
+.ptag--green { background: #62cfae; }
+@media (max-width: 1023.98px) {
+  .project__tags { order: 3; justify-content: center; align-self: center; gap: 8px; margin-top: 18px; }
+  .ptag { height: 30px; padding: 0 16px; font-size: 14.5px; }
+}
