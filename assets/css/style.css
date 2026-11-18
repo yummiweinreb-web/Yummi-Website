@@ -2184,3 +2184,15 @@ html.deck-locked { overscroll-behavior: none; }
 @media (min-width: 1024px) {
   .project__info { height: calc(266 * var(--b)); padding-top: 0 !important; justify-content: center; box-sizing: border-box; }
 }
+
+/* work page mobile round 3: hand-drawn red underline, centred subtitle, bigger project names */
+@media (max-width: 1023.98px) {
+  .page-work .project__tag { align-self: center !important; }
+  .page-work .project__name { font-size: calc(var(--t-sub) * 1.2) !important; }
+  .page-work .project__name::after {
+    width: 96px !important; height: 12px !important; margin: 8px auto 0 !important; border-radius: 0 !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8.5C30 3.5 70 2.5 137 6.5' fill='none' stroke='%23ff5a51' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat !important;
+    clip-path: inset(0 100% 0 0); transition: clip-path .9s var(--ease) .5s;
+  }
+  .page-work .project.is-in .project__name::after { clip-path: inset(0 0 0 0); }
+}
