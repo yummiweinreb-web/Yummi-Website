@@ -959,12 +959,13 @@ void main(){
     let ok = true;
     const bad = el => { el.closest(".field").classList.add("is-error"); ok = false; };
     $$(".is-error", form).forEach(x => x.classList.remove("is-error"));
-    if (!data.name.trim()) bad(form.name);
     const ph = (data.phone || "").trim(), em = (data.email || "").trim();
-    if (ph && !/^[0-9+\-\s()]{9,}$/.test(ph)) bad(form.phone);
-    if (em && !/^\S+@\S+\.\S+$/.test(em)) bad(form.email);
-    if (!ph && !em) { bad(form.phone); bad(form.email); say("רק עוד רגע… השאירו טלפון או מייל כדי שאוכל לחזור אליכם.", true); return; }
-    if (!ok) { say("רק עוד רגע… בדקו את הפרטים שמולאו.", true); return; }
+    const noName = !data.name.trim(), noMail = !em;
+    if (noName) bad(form.name);
+    if (noMail) bad(form.email);
+    if (noName || noMail) { say(noName && noMail ? "חסרים שם ומייל." : noName ? "חסר שם." : "חסר מייל.", true); return; }
+    if (ph && !/^[0-9+\-\s()]{9,}$/.test(ph)) { bad(form.phone); say("מספר הטלפון לא תקין.", true); return; }
+    if (!/^\S+@\S+\.\S+$/.test(em)) { bad(form.email); say("כתובת המייל לא תקינה.", true); return; }
     if (!form.consent.checked) { form.querySelector(".consent").classList.add("is-error"); say("יש לאשר את מדיניות הפרטיות לפני השליחה.", true); return; }
 
     const btn = $("button", form);
