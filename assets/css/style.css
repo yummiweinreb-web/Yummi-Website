@@ -2196,3 +2196,14 @@ html.deck-locked { overscroll-behavior: none; }
   }
   .page-work .project.is-in .project__name::after { clip-path: inset(0 0 0 0); }
 }
+
+/* contact form: privacy consent checkbox */
+.consent { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 15px; line-height: 1.4; color: rgba(255,255,255,.9); border-radius: 10px; }
+.consent input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.consent__box { flex: none; width: 22px; height: 22px; border-radius: 6px; box-shadow: 0 0 0 1.6px rgba(115,40,245,.95) inset; background: rgba(25,8,70,.45); transition: .3s; position: relative; }
+.consent input:checked + .consent__box { background: var(--lime); box-shadow: 0 0 0 1.6px var(--lime) inset; }
+.consent input:checked + .consent__box::after { content: ""; position: absolute; inset: 4px 7px 6px 7px; border: solid #14081f; border-width: 0 2.5px 2.5px 0; transform: rotate(40deg); }
+.consent input:focus-visible + .consent__box { outline: 2px solid var(--lime); outline-offset: 3px; }
+.consent a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.consent.is-error .consent__box { box-shadow: 0 0 0 1.8px var(--red) inset; animation: shake .4s; }
+@media (max-width: 1023.98px) { .consent { order: 5 !important; justify-content: center; } .form .btn.form__send, .form .btn--big { order: 6 !important; } .form__msg { order: 7 !important; } }

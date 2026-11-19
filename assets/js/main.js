@@ -951,17 +951,21 @@ void main(){
   if (!form) return;
   const msg = $(".form__msg", form);
   const say = (text, err) => { msg.textContent = text; msg.classList.toggle("is-err", !!err); msg.classList.add("is-on"); };
-  $$("input, textarea", form).forEach(f => f.addEventListener("input", () => f.closest(".field").classList.remove("is-error")));
+  $$("input, textarea", form).forEach(f => f.addEventListener("input", () => (f.closest(".field") || f.closest(".consent")).classList.remove("is-error")));
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
     let ok = true;
     const bad = el => { el.closest(".field").classList.add("is-error"); ok = false; };
+    $$(".is-error", form).forEach(x => x.classList.remove("is-error"));
     if (!data.name.trim()) bad(form.name);
-    if (!/^[0-9+\-\s()]{9,}$/.test(data.phone.trim())) bad(form.phone);
-    if (data.email.trim() && !/^\S+@\S+\.\S+$/.test(data.email.trim())) bad(form.email);
-    if (!ok) { say("רק עוד רגע… חסר שם או טלפון תקין.", true); return; }
+    const ph = (data.phone || "").trim(), em = (data.email || "").trim();
+    if (ph && !/^[0-9+\-\s()]{9,}$/.test(ph)) bad(form.phone);
+    if (em && !/^\S+@\S+\.\S+$/.test(em)) bad(form.email);
+    if (!ph && !em) { bad(form.phone); bad(form.email); say("רק עוד רגע… השאירו טלפון או מייל כדי שאוכל לחזור אליכם.", true); return; }
+    if (!ok) { say("רק עוד רגע… בדקו את הפרטים שמולאו.", true); return; }
+    if (!form.consent.checked) { form.querySelector(".consent").classList.add("is-error"); say("יש לאשר את מדיניות הפרטיות לפני השליחה.", true); return; }
 
     const btn = $("button", form);
     btn.disabled = true;
@@ -975,7 +979,9 @@ void main(){
         sent = res.ok && j.success !== "false";
       } catch (_) {}
       if (!sent) {
+        say("השליחה לא עברה. נפתחת טיוטת מייל, ואפשר גם לכתוב לי בוואטסאפ.", true);
         location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("פנייה חדשה מהאתר – " + data.name)}&body=${encodeURIComponent(bodyTxt)}`;
+        return;
       }
       form.classList.add("is-sent");
       say(`תודה ${data.name.split(" ")[0]}! קיבלתי, ואחזור אליכם ממש בקרוב.`);
